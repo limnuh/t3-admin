@@ -2,7 +2,6 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { type GetServerSidePropsContext } from 'next';
 import { getServerSession, type DefaultSession, type NextAuthOptions } from 'next-auth';
 import DiscordProvider from 'next-auth/providers/discord';
-import EmailProvider from 'next-auth/providers/email';
 
 import { env } from '~/env.mjs';
 import { prisma } from '~/server/db';
