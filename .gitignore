@@ -43,4 +43,6 @@ yarn-error.log*
 
 # sst
 /.sst/
+/.sst
 /.sst/debug.log
+.sst/debug.log
