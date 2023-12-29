@@ -1,7 +1,7 @@
 import { type Search } from '@prisma/client';
 import { type FC } from 'react';
 
-export type searchData = Search;
+export type searchData = Partial<Search>;
 
 type SearchListProps = {
   searchList?: searchData[];
@@ -32,7 +32,7 @@ const SearchList: FC<SearchListProps> = ({ searchList, handleEdit }) => {
                       <h5 className="font-medium text-black dark:text-white">{item.name}</h5>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="text-black dark:text-white">{item.updatedAt.toISOString().split('T')[0]}</p>
+                      <p className="text-black dark:text-white">{item?.updatedAt?.toISOString().split('T')[0]}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">

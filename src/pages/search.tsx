@@ -29,17 +29,14 @@ const Search = () => {
               <button
                 className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:shadow-1"
                 type="button"
+                onClick={() => setEditedItem({ name: '', url: '' })}
               >
                 New search
               </button>
             </div>
           </div>
           <Modal open={formOpen} onClose={() => setFormOpen(false)}>
-            <SearchForm
-              editedItem={editedItem}
-              onCancel={() => setFormOpen(false)}
-              onSave={(item) => console.log(item)}
-            />
+            <SearchForm editedItem={editedItem} onClose={() => setFormOpen(false)} />
           </Modal>
 
           <SearchList searchList={data} handleEdit={setEditedItem} />
