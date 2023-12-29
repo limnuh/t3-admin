@@ -3,12 +3,6 @@ import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '~/server/api/trpc';
 
 export const searchRouter = createTRPCRouter({
-  hello: publicProcedure.input(z.object({ text: z.string() })).query(({ input }) => {
-    return {
-      greeting: `Hello ${input.text}`,
-    };
-  }),
-
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.search.findMany();
   }),
@@ -45,6 +39,20 @@ export const searchRouter = createTRPCRouter({
         data: {
           ...(input.name && { name: input.name }),
           ...(input.url && { url: input.url }),
+        },
+      });
+    }),
+
+  remove: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.prisma.search.delete({
+        where: {
+          id: input.id,
         },
       });
     }),

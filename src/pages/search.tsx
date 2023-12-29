@@ -10,12 +10,27 @@ import { LoadingPage } from '~/components/Loading';
 const Search = () => {
   const [editedItem, setEditedItem] = useState<searchData | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const ctx = api.useContext();
 
   useEffect(() => {
     if (editedItem && Object.keys(editedItem)?.length >= 1) setFormOpen(true);
   }, [editedItem]);
 
-  const { data, isLoading } = api.search.getAll.useQuery();
+  const { data, isLoading: isLoadingList } = api.search.getAll.useQuery();
+  const { mutate: remove, isLoading: isLoadingRemove } = api.search.remove.useMutation({
+    onSuccess: () => {
+      void ctx.search.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      console.log(errorMessage, e.data);
+      if (errorMessage) {
+        // return toast.error(errorMessage.join(', '));
+      }
+      // toast.error('Failed to post. Please try again later!');
+    },
+  });
+  const isLoading = isLoadingList || isLoadingRemove;
   if (isLoading) return <LoadingPage />;
 
   return (
@@ -39,7 +54,7 @@ const Search = () => {
             <SearchForm editedItem={editedItem} onClose={() => setFormOpen(false)} />
           </Modal>
 
-          <SearchList searchList={data} handleEdit={setEditedItem} />
+          <SearchList searchList={data} handleEdit={setEditedItem} handleRemove={(id) => remove({ id })} />
         </div>
       </div>
     </DefaultLayout>
