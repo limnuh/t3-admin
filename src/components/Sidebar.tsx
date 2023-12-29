@@ -165,7 +165,7 @@ const menuItems = [
   },
   {
     path: '/search',
-    label: 'Search',
+    label: 'Car Search',
     icon: svgs.tables,
   },
   {

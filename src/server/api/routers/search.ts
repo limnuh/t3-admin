@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '~/server/api/trpc';
 
-export const exampleRouter = createTRPCRouter({
+export const searchRouter = createTRPCRouter({
   hello: publicProcedure.input(z.object({ text: z.string() })).query(({ input }) => {
     return {
       greeting: `Hello ${input.text}`,
@@ -10,7 +10,7 @@ export const exampleRouter = createTRPCRouter({
   }),
 
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
+    return ctx.prisma.search.findMany();
   }),
 
   getSecretMessage: protectedProcedure.query(() => {

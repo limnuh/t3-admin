@@ -65,3 +65,12 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model Search {
+    id String @id @default(cuid())
+    name String
+    url String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    @@index([id])
+}
