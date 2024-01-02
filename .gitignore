@@ -42,7 +42,7 @@ yarn-error.log*
 *.tsbuildinfo
 
 # sst
-/.sst/
-/.sst
-/.sst/debug.log
+.sst/
+.sst
+.sst/debug.log
 .sst/debug.log
