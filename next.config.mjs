@@ -36,6 +36,15 @@ const config = {
       ],
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'hasznaltauto.medija.hu',
+        port: '',
+      },
+    ],
+  },
 };
 
 export default config;
