@@ -1,4 +1,5 @@
 import { type Search } from '@prisma/client';
+import Link from 'next/link';
 import { type FC } from 'react';
 
 export type searchData = Partial<Search>;
@@ -42,6 +43,9 @@ const SearchList: FC<SearchListProps> = ({ searchList, handleEdit, handleRemove 
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                       <div className="flex items-center space-x-3.5">
+                        <Link href={`/search/${item.id}`} className="hover:text-primary">
+                          View
+                        </Link>
                         <button onClick={() => handleEdit(item)} className="hover:text-primary">
                           Edit
                         </button>

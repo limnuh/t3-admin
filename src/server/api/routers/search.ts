@@ -1,8 +1,24 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '~/server/api/trpc';
 
 export const searchRouter = createTRPCRouter({
+  getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    const serach = await ctx.prisma.search.findUnique({
+      where: { id: input.id },
+    });
+
+    if (!serach) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Search not found',
+      });
+    }
+
+    return serach;
+  }),
+
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.search.findMany();
   }),

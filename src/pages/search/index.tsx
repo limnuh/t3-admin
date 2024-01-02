@@ -1,11 +1,12 @@
 import SearchForm from '~/components/Search/SearchForm';
-import Breadcrumb from '../components/Breadcrumb';
-import DefaultLayout from '../layout/DefaultLayout';
+import Breadcrumb from '../../components/Breadcrumb';
+import DefaultLayout from '../../layout/DefaultLayout';
 import SearchList, { type searchData } from '~/components/Search/SearchList';
 import { useEffect, useState } from 'react';
 import Modal from '~/components/Modal/Modal';
 import { api } from '~/utils/api';
 import { LoadingPage } from '~/components/Loading';
+import toast from 'react-hot-toast';
 
 const Search = () => {
   const [editedItem, setEditedItem] = useState<searchData | null>(null);
@@ -20,14 +21,15 @@ const Search = () => {
   const { mutate: remove, isLoading: isLoadingRemove } = api.search.remove.useMutation({
     onSuccess: () => {
       void ctx.search.getAll.invalidate();
+      toast.success('You removed new search successfully!');
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       console.log(errorMessage, e.data);
       if (errorMessage) {
-        // return toast.error(errorMessage.join(', '));
+        return toast.error(errorMessage.join(', '));
       }
-      // toast.error('Failed to post. Please try again later!');
+      toast.error('Failed to remove search. Please try again later!');
     },
   });
   const isLoading = isLoadingList || isLoadingRemove;

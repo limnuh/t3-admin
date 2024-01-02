@@ -1,6 +1,7 @@
 import { useState, type FC, type ChangeEventHandler } from 'react';
 import { type searchData } from './SearchList';
 import { api } from '~/utils/api';
+import toast from 'react-hot-toast';
 
 type SearchFormProps = {
   editedItem: searchData | null;
@@ -21,14 +22,15 @@ const SearchForm: FC<SearchFormProps> = ({ editedItem, onClose }) => {
     onSuccess: () => {
       void ctx.search.getAll.invalidate();
       onClose();
+      toast.success('You created a new search successfully!');
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       console.log(errorMessage, e.data);
       if (errorMessage) {
-        // return toast.error(errorMessage.join(', '));
+        return toast.error(errorMessage.join(', '));
       }
-      // toast.error('Failed to post. Please try again later!');
+      toast.error('Failed to create new search. Please try again later!');
     },
   });
 
@@ -36,14 +38,15 @@ const SearchForm: FC<SearchFormProps> = ({ editedItem, onClose }) => {
     onSuccess: () => {
       void ctx.search.getAll.invalidate();
       onClose();
+      toast.success('You updated a new search successfully!');
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       console.log(errorMessage, e.data);
       if (errorMessage) {
-        // return toast.error(errorMessage.join(', '));
+        return toast.error(errorMessage.join(', '));
       }
-      // toast.error('Failed to post. Please try again later!');
+      toast.error('Failed to update search. Please try again later!');
     },
   });
 
