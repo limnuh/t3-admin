@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 import { type GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
 import { useState, type FC } from 'react';
@@ -9,6 +9,7 @@ import SearchDetails from '~/components/Search/SearchDetails';
 import DefaultLayout from '~/layout/DefaultLayout';
 import { ssg } from '~/server/helpers/ssgHelper';
 import { api } from '~/utils/api';
+import { type CarUpload } from '../api/scraper';
 
 const scraperUrl = '/api/scraper?url=';
 
@@ -16,26 +17,14 @@ type SearchDetailsPageProps = {
   id: string;
 };
 
-export type result = {
-  id: string;
-  link: string;
-  title: string;
-  description: string;
-  image: string;
-  price: string;
-  extraData: string;
-  distance: string;
-};
-
 const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
   const { isLoading: isLoadingSearch, data, isError } = api.search.getById.useQuery({ id });
-  const [results, setResults] = useState<result[]>([]);
+  const [results, setResults] = useState<CarUpload[]>([]);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
 
   const updateSearchList = async () => {
-    const result = await axios.get(scraperUrl + data?.url);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
-    if (result.status === 200) return setResults(result?.data?.cars);
+    const result: AxiosResponse<CarUpload[]> = await axios.get(scraperUrl + data?.url);
+    if (result.status === 200) return setResults(result.data);
     setResults([]);
   };
 
@@ -66,7 +55,7 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
             <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
               <SearchDetails name={data.name} url={data.url} onSearch={manualSearch} />
             </div>
-            {isLoadingResults ? <LoaderIcon /> : <CarList searchList={results} />}
+            {isLoadingResults ? <LoaderIcon className="m-6" /> : <CarList searchList={results} />}
           </div>
         )}
       </div>

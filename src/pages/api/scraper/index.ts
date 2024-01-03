@@ -1,3 +1,4 @@
+import { type Car } from '@prisma/client';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import type { NextApiRequest, NextApiResponse } from 'next';
@@ -6,8 +7,39 @@ import scrapeIt from 'scrape-it';
 type scrapeResponse = {
   error?: unknown;
   success?: boolean;
-  data?: unknown;
+  data?: CarUpload[];
 };
+
+export type rawCarData = {
+  id: string;
+  link: string;
+  title: string;
+  description: string;
+  image: string;
+  price: string;
+  extraData: string;
+  distance: string;
+};
+
+export type CarUpload = Partial<Pick<Car, 'id' | 'createdAt' | 'updatedAt'>> &
+  Omit<Car, 'id' | 'createdAt' | 'updatedAt'>;
+
+function convertStringToNumber(input: string): number {
+  const numberPattern = /\D/g;
+  const numericString = input.replace(numberPattern, '');
+  return parseInt(numericString, 10);
+}
+
+const transformCar = (carRaw: rawCarData): CarUpload => ({
+  id: carRaw.id,
+  link: carRaw.link,
+  title: carRaw.title,
+  description: carRaw.description,
+  image: carRaw.image,
+  price: convertStringToNumber(carRaw.price),
+  extraData: carRaw.extraData,
+  distance: convertStringToNumber(carRaw.distance),
+});
 
 export const scrape = async (url: string): Promise<scrapeResponse> => {
   const telepules_id_user_uj =
@@ -16,7 +48,7 @@ export const scrape = async (url: string): Promise<scrapeResponse> => {
   const cookie = 'telepules_id_user_uj=' + telepules_id_user_uj + ';';
   const resposne: scrapeResponse = {
     success: false,
-    data: '',
+    data: [],
   };
   try {
     const resp = await axios.get(url, {
@@ -27,7 +59,7 @@ export const scrape = async (url: string): Promise<scrapeResponse> => {
       },
     });
     const $ = cheerio.load(resp.data as string);
-    const page = scrapeIt.scrapeHTML($, {
+    const page: { cars: rawCarData[] } = scrapeIt.scrapeHTML($, {
       cars: {
         listItem: '.row.talalati-sor',
         data: {
@@ -55,7 +87,10 @@ export const scrape = async (url: string): Promise<scrapeResponse> => {
         },
       },
     });
-    resposne.data = page;
+
+    if (page?.cars.length) {
+      resposne.data = page?.cars.map(transformCar);
+    }
     resposne.success = true;
   } catch (error) {
     resposne.error = error;
