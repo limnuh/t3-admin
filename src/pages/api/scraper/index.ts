@@ -17,6 +17,7 @@ export type rawCarData = {
   description: string;
   image: string;
   price: string;
+  inactivePrice: string;
   extraData: string;
   distance: string;
 };
@@ -37,6 +38,7 @@ const transformCar = (carRaw: rawCarData): CarUpload => ({
   description: carRaw.description,
   image: carRaw.image,
   price: convertStringToNumber(carRaw.price),
+  inactivePrice: convertStringToNumber(carRaw.inactivePrice),
   extraData: carRaw.extraData,
   distance: convertStringToNumber(carRaw.distance),
 });
@@ -81,7 +83,9 @@ export const scrape = async (url: string): Promise<scrapeResponse> => {
             selector: '.talalatisor-kep img',
             attr: 'src',
           },
-          price: '.price-fields-desktop .pricefield-primary',
+          price:
+            ':not(.hidden-md) .price-fields-desktop .pricefield-primary, :not(.hidden-md) .price-fields-desktop .pricefield-primary-highlighted',
+          inactivePrice: ':not(.hidden-md) .price-fields-desktop .pricefield-inactive',
           extraData: '.talalatisor-info.adatok .info',
           distance: '.tavolsag_talalati .tavolsag_talalati',
         },

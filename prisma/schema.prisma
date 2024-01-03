@@ -76,6 +76,7 @@ model Car {
     description String
     image String
     price Int
+    inactivePrice Int?
     extraData String
     distance Int
     createdAt DateTime @default(now())
