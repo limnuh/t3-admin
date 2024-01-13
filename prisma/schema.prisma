@@ -61,13 +61,26 @@ model VerificationToken {
 }
 
 model Search {
-    id        String   @id @default(cuid())
-    name      String
-    url       String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    id                  String                @id @default(cuid())
+    name                String
+    url                 String
+    status              SearchStatus          @default(NEW)
+    createdAt           DateTime              @default(now())
+    updatedAt           DateTime              @updatedAt
+    AgregatedSearchData AgregatedSearchData[] @relation("AgregatedSearchData_to_Search")
 
     @@index([id])
+}
+
+model AgregatedSearchData {
+    id               String   @id @default(cuid())
+    searchId         String   @map("Search") @db.Char(30)
+    search           Search   @relation("AgregatedSearchData_to_Search", fields: [searchId], references: [id])
+    count            Int
+    pricePercentiles Int[]
+    yearPercentiles  Int[]
+    kmPercentiles    Int[]
+    createdAt        DateTime @default(now())
 }
 
 model Car {
@@ -80,8 +93,17 @@ model Car {
     inactivePrice Int?
     extraData     String
     distance      Int
+    km            Int
+    year          Int
+    history       Json?
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 
     @@index([id, price, title])
+}
+
+enum SearchStatus {
+    NEW
+    RUN
+    END
 }
