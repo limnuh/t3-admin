@@ -5,9 +5,10 @@ type SearchDetailsProps = {
   name: string;
   url: string;
   onSearch: () => void;
+  searchCount: number;
 };
 
-const SearchDetails: FC<SearchDetailsProps> = ({ name, url, onSearch }) => {
+const SearchDetails: FC<SearchDetailsProps> = ({ name, url, onSearch, searchCount }) => {
   return (
     <div className="flex justify-between gap-4.5">
       <h2 className="font-normal text-2xl text-black dark:text-white">
@@ -15,6 +16,7 @@ const SearchDetails: FC<SearchDetailsProps> = ({ name, url, onSearch }) => {
         <Link className="underline" href={url}>
           URL
         </Link>
+        {!!searchCount && ` | Count: ${searchCount}`}
       </h2>
 
       <button

@@ -9,7 +9,7 @@ import SearchDetails from '~/components/Search/SearchDetails';
 import DefaultLayout from '~/layout/DefaultLayout';
 import { ssg } from '~/server/helpers/ssgHelper';
 import { api } from '~/utils/api';
-import { type CarUpload } from '../api/scraper';
+import { type scrapeResponse } from '../api/scraper';
 
 const scraperUrl = '/api/scraper?url=';
 
@@ -17,15 +17,19 @@ type SearchDetailsPageProps = {
   id: string;
 };
 
+const apiDefaultData = {
+  data: { cars: [], totalCount: 0 },
+};
+
 const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
   const { isLoading: isLoadingSearch, data, isError } = api.search.getById.useQuery({ id });
-  const [results, setResults] = useState<CarUpload[]>([]);
+  const [results, setResults] = useState<scrapeResponse>(apiDefaultData);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
 
   const updateSearchList = async () => {
-    const result: AxiosResponse<CarUpload[]> = await axios.get(scraperUrl + data?.url);
+    const result: AxiosResponse<scrapeResponse> = await axios.get(scraperUrl + data?.url);
     if (result.status === 200) return setResults(result.data);
-    setResults([]);
+    setResults(apiDefaultData);
   };
 
   const manualSearch = () => {
@@ -53,9 +57,14 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
         ) : (
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
-              <SearchDetails name={data.name} url={data.url} onSearch={manualSearch} />
+              <SearchDetails
+                name={data.name}
+                searchCount={results.data?.totalCount}
+                url={data.url}
+                onSearch={manualSearch}
+              />
             </div>
-            {isLoadingResults ? <LoaderIcon className="m-6" /> : <CarList searchList={results} />}
+            {isLoadingResults ? <LoaderIcon className="m-6" /> : <CarList searchList={results.data?.cars} />}
           </div>
         )}
       </div>

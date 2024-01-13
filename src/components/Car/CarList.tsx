@@ -4,7 +4,7 @@ import { type FC } from 'react';
 import { type CarUpload } from '~/pages/api/scraper';
 
 type CarListProps = {
-  searchList?: CarUpload[];
+  searchList: CarUpload[];
 };
 
 const CarList: FC<CarListProps> = ({ searchList }) => {
