@@ -63,11 +63,12 @@ model VerificationToken {
 model Search {
     id                  String                @id @default(cuid())
     name                String
-    url                 String
+    url                 String                @db.VarChar(5000)
     status              SearchStatus          @default(NEW)
     createdAt           DateTime              @default(now())
     updatedAt           DateTime              @updatedAt
     AgregatedSearchData AgregatedSearchData[] @relation("AgregatedSearchData_to_Search")
+    Car                 Car[]                 @relation("Cars_to_Search")
 
     @@index([id])
 }
@@ -85,6 +86,8 @@ model AgregatedSearchData {
 
 model Car {
     id            String   @unique
+    searchId      String   @map("Search") @db.Char(30)
+    search        Search   @relation("Cars_to_Search", fields: [searchId], references: [id])
     link          String
     title         String
     description   String
@@ -96,10 +99,18 @@ model Car {
     km            Int
     year          Int
     history       Json?
+    deleted       Boolean  @default(false)
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
 
     @@index([id, price, title])
+}
+
+model Log {
+    id          String   @id @default(cuid())
+    eventType   String
+    description String
+    createdAt   DateTime @default(now())
 }
 
 enum SearchStatus {
