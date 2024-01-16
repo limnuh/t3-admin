@@ -1,6 +1,6 @@
-`npx prisma db push`
-
 `npx prisma migrate dev`
+
+`npx prisma db push`
 
 `npm run dev`
 
