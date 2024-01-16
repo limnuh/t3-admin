@@ -8,6 +8,7 @@
     "postinstall": "prisma generate",
     "lint": "next lint",
     "prepare": "husky install",
+    "cron": "npx ts-node src/service/cron.mjs",
     "start": "next start"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
     "axios": "^1.6.3",
     "cheerio": "^1.0.0-rc.12",
     "dayjs": "^1.11.10",
+    "deep-object-diff": "^1.1.9",
     "jsvectormap": "^1.5.3",
     "next": "^13.4.13",
     "next-auth": "^4.22.4",
@@ -40,6 +42,7 @@
     "@svgr/webpack": "^8.0.1",
     "@types/eslint": "^8.44.2",
     "@types/node": "^18.16.0",
+    "@types/node-cron": "^3.0.11",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
@@ -51,6 +54,7 @@
     "eslint-config-next": "^13.4.13",
     "husky": "^8.0.3",
     "lint-staged": "^15.0.2",
+    "node-cron": "^3.0.3",
     "postcss": "^8.4.27",
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.5.1",
