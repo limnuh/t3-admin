@@ -23,11 +23,16 @@ export const searchRouter = createTRPCRouter({
     return ctx.prisma.search.findMany();
   }),
 
+  getRunningSearches: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.search.findMany({ where: { status: 'RUN' } });
+  }),
+
   create: protectedProcedure
     .input(
       z.object({
         name: z.string().min(1).max(255),
-        url: z.string().min(1).max(1000),
+        url: z.string().min(1).max(5000),
+        status: z.enum(['NEW', 'RUN', 'END']).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -44,7 +49,8 @@ export const searchRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string().min(1).max(255).optional(),
-        url: z.string().min(1).max(1000).optional(),
+        url: z.string().min(1).max(5000).optional(),
+        status: z.enum(['NEW', 'RUN', 'END']).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -55,6 +61,7 @@ export const searchRouter = createTRPCRouter({
         data: {
           ...(input.name && { name: input.name }),
           ...(input.url && { url: input.url }),
+          ...(input.status && { status: input.status }),
         },
       });
     }),

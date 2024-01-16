@@ -12,7 +12,9 @@ const SearchForm: FC<SearchFormProps> = ({ editedItem, onClose }) => {
   const [searchItem, setSearchItem] = useState(editedItem);
   if (!searchItem) return null;
   const isNew = (data: searchData) => !data.id;
-  const onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = ({ target: { value, name } }) => {
+  const onChange: ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> = ({
+    target: { value, name },
+  }) => {
     setSearchItem({ ...searchItem, [name]: value });
   };
 
@@ -57,11 +59,13 @@ const SearchForm: FC<SearchFormProps> = ({ editedItem, onClose }) => {
       return mutateNew({
         name: item.name ?? '',
         url: item.url ?? '',
+        status: item.status,
       });
     const updatedData = {
       id: item.id ?? '',
       name: item?.name ?? '',
       url: item?.url ?? '',
+      status: item.status,
     };
     mutateUpdate(updatedData);
   };
@@ -82,6 +86,29 @@ const SearchForm: FC<SearchFormProps> = ({ editedItem, onClose }) => {
               onChange={onChange}
               value={searchItem?.name ?? ''}
             />
+          </div>
+        </div>
+
+        <div className="mb-5.5">
+          <label className="mb-3 block text-sm font-medium text-black dark:text-white" htmlFor="name">
+            Car search status
+          </label>
+          <div className="relative">
+            <select
+              name="status"
+              onChange={onChange}
+              className="relative z-20 w-full appearance-none rounded border border-stroke bg-transparent py-3 px-4 outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input"
+            >
+              <option value="NEW" selected={searchItem?.status === 'NEW'}>
+                NEW
+              </option>
+              <option value="RUN" selected={searchItem?.status === 'RUN'}>
+                RUN
+              </option>
+              <option value="END" selected={searchItem?.status === 'END'}>
+                END
+              </option>
+            </select>
           </div>
         </div>
 
