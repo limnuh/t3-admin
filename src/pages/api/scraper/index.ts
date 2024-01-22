@@ -3,7 +3,7 @@ import axios, { type AxiosResponse } from 'axios';
 import cheerio from 'cheerio';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import scrapeIt from 'scrape-it';
-import { convertStringToNumber, transformCar } from './transformers';
+import { convertStringToNumber, transformCar } from '../../../utils/transformers';
 
 export type scrapeResponse = {
   error?: unknown;
@@ -16,6 +16,7 @@ export type scrapeResponse = {
 
 export type rawCarData = {
   id: string;
+  searchId: string;
   link: string;
   title: string;
   description: string;
@@ -26,8 +27,8 @@ export type rawCarData = {
   distance: string;
 };
 
-export type CarUpload = Partial<Pick<Car, 'id' | 'createdAt' | 'updatedAt'>> &
-  Omit<Car, 'id' | 'createdAt' | 'updatedAt'>;
+export type CarUpload = Partial<Pick<Car, 'createdAt' | 'history' | 'updatedAt' | 'searchId'>> &
+  Omit<Car, 'createdAt' | 'history' | 'updatedAt' | 'searchId'>;
 
 type RawScrapedData = { cars: rawCarData[]; totalCount: string };
 
@@ -134,7 +135,7 @@ function fetchWithDelay(urls: string[], delay = 1000): Promise<rawCarData[]> {
         return new Promise((resolve) => setTimeout(resolve, randomisedDelay)); // Delay for the next request
       })
       .catch((error) => {
-        console.error('An error occurred:', error);
+        console.error('An error occurred while fetching pages:', error);
         return new Promise((resolve) => setTimeout(resolve, randomisedDelay)); // Delay even if an error occurs
       });
   });
@@ -147,10 +148,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>
     const url = String(req.query.url);
     const result = await scrape(url);
     res.status(result.success ? 200 : 500).json(result);
-  } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    return;
   }
+
+  res.setHeader('Allow', ['GET']);
+  res.status(405).end(`Method ${req.method} Not Allowed`);
 };
 
 export default handler;
