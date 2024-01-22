@@ -1,5 +1,21 @@
 import type { CarUpload, rawCarData } from '../pages/api/scraper';
 
+export type newCar = {
+  id: string;
+  searchId: string;
+  link: string;
+  description: string;
+  title: string;
+  image: string;
+  extraData: string;
+  price: number;
+  inactivePrice: number;
+  distance: number;
+  km: number;
+  year: number;
+  history: unknown[];
+};
+
 export function convertStringToNumber(input: string): number {
   const numberPattern = /\D/g;
   const numericString = input.replace(numberPattern, '');
@@ -9,7 +25,7 @@ export function convertStringToNumber(input: string): number {
 function extractYear(str: string): number {
   const regex = /\b(19|20)\d{2}\b/;
   const match = str.match(regex);
-  return match ? Number(match[0]) : 0;
+  return match && !isNaN(Number(match[0])) ? Number(match[0]) : 0;
 }
 
 function extractKilometers(str: string): number {
@@ -20,6 +36,7 @@ function extractKilometers(str: string): number {
 
 export const transformCar = (carRaw: rawCarData): CarUpload => ({
   id: carRaw.id,
+  searchId: carRaw.searchId,
   link: carRaw.link,
   title: carRaw.title,
   description: carRaw.description,
@@ -28,7 +45,23 @@ export const transformCar = (carRaw: rawCarData): CarUpload => ({
   inactivePrice: convertStringToNumber(carRaw.inactivePrice),
   extraData: carRaw.extraData,
   year: extractYear(carRaw.extraData),
-  history: null,
   km: extractKilometers(carRaw.extraData),
+  deleted: false,
   distance: convertStringToNumber(carRaw.distance),
+});
+
+export const prepareNewCar = (car: CarUpload, searchId: string): newCar => ({
+  id: car.id,
+  searchId: searchId,
+  link: car.link,
+  description: car.description,
+  title: car.title,
+  image: car.image,
+  extraData: car.extraData,
+  price: car.price ? car.price : 0,
+  inactivePrice: car.inactivePrice && typeof car.inactivePrice === 'number' ? car.inactivePrice : 0,
+  distance: car.distance,
+  km: car.km,
+  year: car.year,
+  history: [],
 });
