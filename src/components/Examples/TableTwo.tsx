@@ -1,8 +1,8 @@
 import Image from 'next/image';
-import ProductOne from '../../public/images/product/product-01.png';
-import ProductTwo from '../../public/images/product/product-02.png';
-import ProductThree from '../../public/images/product/product-03.png';
-import ProductFour from '../../public/images/product/product-04.png';
+import ProductOne from '../../../public/images/product/product-01.png';
+import ProductTwo from '../../../public/images/product/product-02.png';
+import ProductThree from '../../../public/images/product/product-03.png';
+import ProductFour from '../../../public/images/product/product-04.png';
 
 const TableTwo = () => {
   return (

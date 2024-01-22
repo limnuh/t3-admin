@@ -1,9 +1,9 @@
 import Link from 'next/link';
-import UserOne from '../../public/images/user/user-01.png';
-import UserTwo from '../../public/images/user/user-02.png';
-import UserThree from '../../public/images/user/user-03.png';
-import UserFour from '../../public/images/user/user-04.png';
-import UserFive from '../../public/images/user/user-05.png';
+import UserOne from '../../../public/images/user/user-01.png';
+import UserTwo from '../../../public/images/user/user-02.png';
+import UserThree from '../../../public/images/user/user-03.png';
+import UserFour from '../../../public/images/user/user-04.png';
+import UserFive from '../../../public/images/user/user-05.png';
 import Image from 'next/image';
 
 const ChatCard = () => {

@@ -1,13 +1,13 @@
 import Breadcrumb from '../../components/Breadcrumb';
-import CheckboxFive from '../../components/CheckboxFive';
-import CheckboxFour from '../../components/CheckboxFour';
-import CheckboxOne from '../../components/CheckboxOne';
-import CheckboxThree from '../../components/CheckboxThree';
-import CheckboxTwo from '../../components/CheckboxTwo';
-import SwitcherFour from '../../components/SwitcherFour';
-import SwitcherOne from '../../components/SwitcherOne';
-import SwitcherThree from '../../components/SwitcherThree';
-import SwitcherTwo from '../../components/SwitcherTwo';
+import CheckboxFive from '../../components/Examples/CheckboxFive';
+import CheckboxFour from '../../components/Examples/CheckboxFour';
+import CheckboxOne from '../../components/Examples/CheckboxOne';
+import CheckboxThree from '../../components/Examples/CheckboxThree';
+import CheckboxTwo from '../../components/Examples/CheckboxTwo';
+import SwitcherFour from '../../components/Examples/SwitcherFour';
+import SwitcherOne from '../../components/Examples/SwitcherOne';
+import SwitcherThree from '../../components/Examples/SwitcherThree';
+import SwitcherTwo from '../../components/Examples/SwitcherTwo';
 import DefaultLayout from '../../layout/DefaultLayout';
 
 const FormElements = () => {

@@ -1,12 +1,12 @@
-import CardFour from '~/components/CardFour';
-import CardOne from '~/components/CardOne';
-import CardThree from '~/components/CardThree';
-import CardTwo from '~/components/CardTwo';
-import ChartOne from '~/components/ChartOne';
-import ChartThree from '~/components/ChartThree';
-import ChartTwo from '~/components/ChartTwo';
-import ChatCard from '~/components/ChatCard';
-import TableOne from '~/components/TableOne';
+import CardFour from '~/components/Examples/CardFour';
+import CardOne from '~/components/Examples/CardOne';
+import CardThree from '~/components/Examples/CardThree';
+import CardTwo from '~/components/Examples/CardTwo';
+import ChartOne from '~/components/Examples/ChartOne';
+import ChartThree from '~/components/Examples/ChartThree';
+import ChartTwo from '~/components/Examples/ChartTwo';
+import ChatCard from '~/components/Examples/ChatCard';
+import TableOne from '~/components/Examples/TableOne';
 import DefaultLayout from '~/layout/DefaultLayout';
 
 const ECommerce = () => {

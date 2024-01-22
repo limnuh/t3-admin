@@ -1,9 +1,9 @@
 import Image from 'next/image';
-import { default as BrandOne } from '../../public/images/brand/brand-01.svg';
-import { default as BrandTwo } from '../../public/images/brand/brand-02.svg';
-import { default as BrandThree } from '../../public/images/brand/brand-03.svg';
-import { default as BrandFour } from '../../public/images/brand/brand-04.svg';
-import { default as BrandFive } from '../../public/images/brand/brand-05.svg';
+import { default as BrandOne } from '../../../public/images/brand/brand-01.svg';
+import { default as BrandTwo } from '../../../public/images/brand/brand-02.svg';
+import { default as BrandThree } from '../../../public/images/brand/brand-03.svg';
+import { default as BrandFour } from '../../../public/images/brand/brand-04.svg';
+import { default as BrandFive } from '../../../public/images/brand/brand-05.svg';
 
 const TableOne = () => {
   return (
