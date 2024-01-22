@@ -93,12 +93,12 @@ model Car {
     description   String
     image         String
     price         Int
-    inactivePrice Int?
+    inactivePrice Int
     extraData     String
     distance      Int
     km            Int
     year          Int
-    history       Json?
+    history       Json[]
     deleted       Boolean  @default(false)
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
