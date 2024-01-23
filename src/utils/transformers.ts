@@ -23,6 +23,25 @@ export function convertStringToNumber(input: string): number {
   return isNaN(parsedInt) ? 0 : parsedInt;
 }
 
+export const calculatePercentiles = (inputArray: number[]): number[] => {
+  if (inputArray.length < 2) {
+    return [];
+  }
+
+  const sortedArray = [...inputArray].sort((a, b) => a - b);
+
+  const min = sortedArray.at(0) || 0;
+  const avg = sortedArray.reduce((a, b) => a + b, 0) / sortedArray.length;
+  const max = sortedArray.at(-1) || 0;
+
+  const firstHalf = sortedArray.splice(0, Math.floor(sortedArray.length / 2));
+  const secondHalf = sortedArray;
+  const firstHalfAvg = firstHalf.reduce((a, b) => a + b, 0) / firstHalf.length;
+  const secondHalfAvg = secondHalf.reduce((a, b) => a + b, 0) / secondHalf.length;
+
+  return [min, firstHalfAvg, avg, secondHalfAvg, max];
+};
+
 function extractYear(str: string): number {
   const regex = /\b(19|20)\d{2}\b/;
   const match = str.match(regex);

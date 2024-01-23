@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { type newCar, prepareNewCar } from '../../../utils/transformers';
+import { type newCar, prepareNewCar, calculatePercentiles } from '../../../utils/transformers';
 import { appRouter } from '~/server/api/root';
 import { createTRPCContext } from '~/server/api/trpc';
 import { type CarUpload, scrape, type scrapeResponse } from '.';
@@ -98,13 +98,16 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
     const caller = appRouter.createCaller(ctx);
 
     const searches = await caller.search.getRunningSearches();
-    console.log(searches.length, ' searches running ----'); // TODO: log to db
+    console.log(searches.length, ' searches will run ----'); // TODO: log to db
+    resultText += `
+    ${searches.length} search will be run`;
     const allScrapedData = await scrapeAllRunningSeach(searches);
 
     for await (const [searchId, scrapedCars] of allScrapedData.entries()) {
       const carsFromDb = await caller.car.getBySearcIds({ searchId });
       const { newCars, needtToUpdateCars, needToDeleteCars } = seaparateScrapedCars(scrapedCars, carsFromDb, searchId);
-      resultText = `Save started *** New: ${newCars.length} Update: ${needtToUpdateCars.length} Delete: ${needToDeleteCars.length} ***`;
+      resultText += `
+      ${searchId} Save started *** New: ${newCars.length} Update: ${needtToUpdateCars.length} Delete: ${needToDeleteCars.length} ***`;
       if (newCars?.length) {
         await caller.car.createMany({ data: newCars });
         console.log(newCars.length, ' new cars created----'); // TODO: log to db
@@ -124,8 +127,10 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
         console.log(needtToUpdateCars.length, ' cars will be updated----'); // TODO: log to db
         needtToUpdateCars.map(async (car) => {
           const scrapedCar = scrapedCars.find(({ id }) => id === car.id);
-          if (!scrapedCar?.link) return;
-
+          if (!scrapedCar) {
+            console.error('scrapedCar missing: ', car.id);
+            return;
+          }
           const scrapedCarDataToHistory = getCarDataForHistoryDiff(scrapedCar);
           await caller.car.update({
             id: car.id,
@@ -136,6 +141,16 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
           });
         });
       }
+
+      const aggregatedData = {
+        searchId,
+        count: scrapedCars.length,
+        pricePercentiles: calculatePercentiles(scrapedCars.map(({ price }) => price)),
+        yearPercentiles: calculatePercentiles(scrapedCars.map(({ year }) => year)),
+        kmPercentiles: calculatePercentiles(scrapedCars.map(({ km }) => km)),
+      };
+
+      await caller.aggregatedSearchData.create(aggregatedData);
     }
   } catch (error) {
     console.error('An error occurred while store', error);

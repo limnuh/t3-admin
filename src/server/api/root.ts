@@ -2,6 +2,7 @@ import { createTRPCRouter } from '~/server/api/trpc';
 import { searchRouter } from './routers/search';
 import { carRouter } from './routers/car';
 import { createCallerFactory } from '@trpc/server';
+import { aggregatedSearchDataRouter } from './routers/aggregatedSearchData';
 
 /**
  * This is the primary router for your server.
@@ -11,6 +12,7 @@ import { createCallerFactory } from '@trpc/server';
 export const appRouter = createTRPCRouter({
   search: searchRouter,
   car: carRouter,
+  aggregatedSearchData: aggregatedSearchDataRouter,
 });
 
 export const createCaller = createCallerFactory();
