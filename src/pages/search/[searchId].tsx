@@ -22,26 +22,14 @@ const apiDefaultData = {
 };
 
 const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
-  const { isLoading: isLoadingSearch, data, isError } = api.search.getById.useQuery({ id });
-  const [results, setResults] = useState<scrapeResponse>(apiDefaultData);
-  const [isLoadingResults, setIsLoadingResults] = useState(false);
-
-  const updateSearchList = async () => {
-    const result: AxiosResponse<scrapeResponse> = await axios.get(scraperUrl + data?.url);
-    if (result.status === 200) return setResults(result.data);
-    setResults(apiDefaultData);
-  };
-
-  const manualSearch = () => {
-    setIsLoadingResults(true);
-    updateSearchList()
-      .then(() => {
-        setIsLoadingResults(false);
-      })
-      .catch(() => {
-        setIsLoadingResults(false);
-      });
-  };
+  const { isLoading: isLoadingSearch, data, isError: isErrorSearch } = api.search.getById.useQuery({ id });
+  const {
+    isLoading: isLoadingCars,
+    data: cars,
+    isError: isErrorCars,
+  } = api.car.getBySearcIds.useQuery({ searchId: id });
+  const isLoading = isLoadingCars || isLoadingSearch;
+  const isError = isErrorCars || isErrorSearch;
 
   return (
     <DefaultLayout>
@@ -52,19 +40,18 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
         <Breadcrumb pageName="Search Details" />
         {isError ? (
           <div>Error</div>
-        ) : isLoadingSearch ? (
+        ) : isLoading ? (
           <LoaderIcon />
         ) : (
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
-              <SearchDetails
-                name={data.name}
-                searchCount={results.data?.totalCount}
-                url={data.url}
-                onSearch={manualSearch}
-              />
+              {isLoadingSearch || !data ? (
+                <LoaderIcon />
+              ) : (
+                <SearchDetails name={data.name} searchCount={cars?.length ?? 0} url={data.url} />
+              )}
             </div>
-            {isLoadingResults ? <LoaderIcon className="m-6" /> : <CarList searchList={results.data?.cars} />}
+            {isLoadingCars || !cars ? <LoaderIcon className="m-6" /> : <CarList searchList={cars} />}
           </div>
         )}
       </div>

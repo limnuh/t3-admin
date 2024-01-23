@@ -50,12 +50,12 @@ const scrapeAllRunningSeach = (searches: Search[], delay = 1000): Promise<AllScr
 };
 
 const getCarDataForHistoryDiff = (car: Partial<Car>): Partial<carHistoryData> => ({
-  link: car.link,
+  // link: car.link,
   title: car.title,
   description: car.description,
   image: car.image,
   price: car.price,
-  inactivePrice: car.inactivePrice,
+  inactivePrice: car.inactivePrice || 0,
   extraData: car.extraData,
   distance: car.distance,
   deleted: Boolean(car.deleted),
@@ -64,7 +64,7 @@ const getCarDataForHistoryDiff = (car: Partial<Car>): Partial<carHistoryData> =>
 });
 
 const createNewHistory = (current: Partial<carHistoryData>, past: Car) => {
-  const isEqual = Object.keys(diff(current, getCarDataForHistoryDiff(past))).length === 0;
+  const isEqual = Object.keys(diff(getCarDataForHistoryDiff(current), getCarDataForHistoryDiff(past))).length === 0;
   if (isEqual) return past.history;
   return [
     ...past.history,
@@ -128,8 +128,6 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
 
           const scrapedCarDataToHistory = getCarDataForHistoryDiff(scrapedCar);
           const carDataToHistory = getCarDataForHistoryDiff(car);
-          if (typeof carDataToHistory.inactivePrice !== 'number')
-            return console.log('inactiveprice-----', carDataToHistory.inactivePrice);
           await caller.car.update({
             id: car.id,
             ...carDataToHistory,

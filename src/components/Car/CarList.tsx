@@ -21,7 +21,8 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">Title</th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Price</th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">Extra Data</th>
-                <th className="py-4 px-4 font-medium text-black dark:text-white">Distance</th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">Dates</th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">History</th>
               </tr>
             </thead>
             <tbody>
@@ -34,19 +35,25 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      <Link href={car.link}>{car.title}</Link>
+                      <Link href={car.link} className={`${car.deleted ? 'line-through' : ''}`}>
+                        {car.title}
+                      </Link>
                     </p>
+                    {car.extraData}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
                       {car.price}
                     </p>
+                    <p className="text-black whitespace-nowrap dark:text-white">{car.createdAt?.toISOString()}</p>
+                    <p className="text-black whitespace-nowrap dark:text-white">{car.updatedAt?.toISOString()}</p>
                   </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">{car.extraData}</p>
-                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark"></td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">{car.distance}</p>
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <pre className="text-black dark:text-white">{JSON.stringify(car.history, null, 2)}</pre>
                   </td>
                 </tr>
               ))}

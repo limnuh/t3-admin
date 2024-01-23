@@ -4,11 +4,10 @@ import { type FC } from 'react';
 type SearchDetailsProps = {
   name: string;
   url: string;
-  onSearch: () => void;
   searchCount: number;
 };
 
-const SearchDetails: FC<SearchDetailsProps> = ({ name, url, onSearch, searchCount }) => {
+const SearchDetails: FC<SearchDetailsProps> = ({ name, url, searchCount }) => {
   return (
     <div className="flex justify-between gap-4.5">
       <h2 className="font-normal text-2xl text-black dark:text-white">
@@ -18,14 +17,6 @@ const SearchDetails: FC<SearchDetailsProps> = ({ name, url, onSearch, searchCoun
         </Link>
         {!!searchCount && ` | Count: ${searchCount}`}
       </h2>
-
-      <button
-        className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:shadow-1"
-        type="button"
-        onClick={onSearch}
-      >
-        Search
-      </button>
     </div>
   );
 };
