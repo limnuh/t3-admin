@@ -19,7 +19,8 @@ export type newCar = {
 export function convertStringToNumber(input: string): number {
   const numberPattern = /\D/g;
   const numericString = input.replace(numberPattern, '');
-  return parseInt(numericString, 10);
+  const parsedInt = parseInt(numericString, 10);
+  return isNaN(parsedInt) ? 0 : parsedInt;
 }
 
 function extractYear(str: string): number {
