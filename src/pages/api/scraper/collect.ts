@@ -50,7 +50,7 @@ const scrapeAllRunningSeach = (searches: Search[], delay = 1000): Promise<AllScr
 };
 
 const getCarDataForHistoryDiff = (car: Partial<Car>): Partial<carHistoryData> => ({
-  // link: car.link,
+  link: car.link,
   title: car.title,
   description: car.description,
   image: car.image,
@@ -91,7 +91,8 @@ const seaparateScrapedCars = (
   };
 };
 
-const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>): Promise<boolean> => {
+const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>): Promise<string> => {
+  let resultText = '';
   try {
     const ctx = await createTRPCContext({ req, res });
     const caller = appRouter.createCaller(ctx);
@@ -103,9 +104,7 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
     for await (const [searchId, scrapedCars] of allScrapedData.entries()) {
       const carsFromDb = await caller.car.getBySearcIds({ searchId });
       const { newCars, needtToUpdateCars, needToDeleteCars } = seaparateScrapedCars(scrapedCars, carsFromDb, searchId);
-      console.log(
-        `Save started *** newCars: ${newCars.length} needtToUpdateCars: ${needtToUpdateCars.length} needToDeleteCars: ${needToDeleteCars.length}`
-      );
+      resultText = `Save started *** New: ${newCars.length} Update: ${needtToUpdateCars.length} Delete: ${needToDeleteCars.length} ***`;
       if (newCars?.length) {
         await caller.car.createMany({ data: newCars });
         console.log(newCars.length, ' new cars created----'); // TODO: log to db
@@ -115,40 +114,41 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
           await caller.car.update({
             id: car.id,
             deleted: true,
-            history: createNewHistory({}, car),
+            history: createNewHistory({ ...car, deleted: true }, car),
             updatedAt: new Date(),
           });
         });
         console.log(needToDeleteCars.length, ' cars deleted----'); // TODO: log to db
       }
       if (needtToUpdateCars?.length) {
+        console.log(needtToUpdateCars.length, ' cars will be updated----'); // TODO: log to db
         needtToUpdateCars.map(async (car) => {
           const scrapedCar = scrapedCars.find(({ id }) => id === car.id);
           if (!scrapedCar?.link) return;
 
           const scrapedCarDataToHistory = getCarDataForHistoryDiff(scrapedCar);
-          const carDataToHistory = getCarDataForHistoryDiff(car);
           await caller.car.update({
             id: car.id,
-            ...carDataToHistory,
+            ...scrapedCarDataToHistory,
+            deleted: false,
             history: createNewHistory(scrapedCarDataToHistory, car),
             updatedAt: new Date(),
           });
         });
-        console.log(needToDeleteCars.length, ' cars updated----'); // TODO: log to db
       }
     }
   } catch (error) {
     console.error('An error occurred while store', error);
-    return false;
+    return 'error';
   }
-  return true;
+  console.log(resultText);
+  return resultText;
 };
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>) => {
   if (req.method === 'GET') {
-    const success = await store(req, res);
-    res.status(success ? 200 : 500).end();
+    const result = await store(req, res);
+    res.status(result !== 'error' ? 200 : 500).end(result);
     return;
   }
 

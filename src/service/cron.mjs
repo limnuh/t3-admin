@@ -14,7 +14,7 @@ cron.schedule('19 * * * *', () => {
 });
 
 cron.schedule('0 0 * * *', () => {
-  console.log('Running a task every midnight (no nothing now)');
+  console.log('Running a task every midnight (do nothing now)');
 
   // create agregated data about the current search data (without scrape)
 });

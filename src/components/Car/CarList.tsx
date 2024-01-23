@@ -17,44 +17,44 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">Image</th>
+                <th className="py-4 px-4 font-medium text-black dark:text-white">History</th>
+                {/* <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">Image</th> */}
                 <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">Title</th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">Price</th>
                 <th className="py-4 px-4 font-medium text-black dark:text-white">Extra Data</th>
-                <th className="py-4 px-4 font-medium text-black dark:text-white">Dates</th>
-                <th className="py-4 px-4 font-medium text-black dark:text-white">History</th>
               </tr>
             </thead>
             <tbody>
               {searchList?.map((car) => (
                 <tr key={car.id}>
-                  <td className="border-b border-[#eee] py-2 px-4 dark:border-strokedark">
+                  {/* <td className="border-b border-[#eee] py-2 px-4 dark:border-strokedark">
                     <h5 className="font-medium text-black dark:text-white">
                       <Image src={car.image} alt={car.title} width={118} height={88} />
                     </h5>
+                  </td> */}
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <pre className="text-black dark:text-white">{JSON.stringify(car.history, null, 2)}</pre>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
                       <Link href={car.link} className={`${car.deleted ? 'line-through' : ''}`}>
                         {car.title}
                       </Link>
+                      {car.id}
                     </p>
+                    Évjárat: {car.year} Távolság: {car.distance} KM: {car.km} <br />
                     {car.extraData}
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    {!!car.inactivePrice && <p className="line-through text-sm">{car.inactivePrice}</p>}
                     <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
                       {car.price}
                     </p>
+
                     <p className="text-black whitespace-nowrap dark:text-white">{car.createdAt?.toISOString()}</p>
                     <p className="text-black whitespace-nowrap dark:text-white">{car.updatedAt?.toISOString()}</p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark"></td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">{car.distance}</p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <pre className="text-black dark:text-white">{JSON.stringify(car.history, null, 2)}</pre>
-                  </td>
                 </tr>
               ))}
             </tbody>
