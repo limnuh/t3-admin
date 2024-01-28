@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '~/server/api/trpc';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const aggregatedSearchDataRouter = createTRPCRouter({
   getBySearchId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
@@ -19,7 +19,7 @@ export const aggregatedSearchDataRouter = createTRPCRouter({
     return aggregatedSearchData;
   }),
 
-  create: protectedProcedure
+  create: publicProcedure
     .input(
       z.object({
         searchId: z.string(),

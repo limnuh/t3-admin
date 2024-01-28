@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from '~/server/api/trpc';
+import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
 export const searchRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
@@ -27,7 +27,7 @@ export const searchRouter = createTRPCRouter({
     return ctx.prisma.search.findMany({ where: { status: 'RUN' } });
   }),
 
-  create: protectedProcedure
+  create: publicProcedure
     .input(
       z.object({
         name: z.string().min(1).max(255),
@@ -44,7 +44,7 @@ export const searchRouter = createTRPCRouter({
       });
     }),
 
-  update: protectedProcedure
+  update: publicProcedure
     .input(
       z.object({
         id: z.string(),
@@ -66,7 +66,7 @@ export const searchRouter = createTRPCRouter({
       });
     }),
 
-  remove: protectedProcedure
+  remove: publicProcedure
     .input(
       z.object({
         id: z.string(),

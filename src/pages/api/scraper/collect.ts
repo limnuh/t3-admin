@@ -115,7 +115,7 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
       if (needToDeleteCars?.length) {
         needToDeleteCars.map(async (car) => {
           await caller.car.update({
-            id: car.id,
+            ...car,
             deleted: true,
             history: createNewHistory({ ...car, deleted: true }, car),
             updatedAt: new Date(),
@@ -125,11 +125,11 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
       }
       if (needtToUpdateCars?.length) {
         console.log(needtToUpdateCars.length, ' cars will be updated----'); // TODO: log to db
-        needtToUpdateCars.map(async (car) => {
+        for await (const car of needtToUpdateCars) {
           const scrapedCar = scrapedCars.find(({ id }) => id === car.id);
           if (!scrapedCar) {
             console.error('scrapedCar missing: ', car.id);
-            return;
+            continue;
           }
           const scrapedCarDataToHistory = getCarDataForHistoryDiff(scrapedCar);
           await caller.car.update({
@@ -139,7 +139,7 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
             history: createNewHistory(scrapedCarDataToHistory, car),
             updatedAt: new Date(),
           });
-        });
+        }
       }
 
       const aggregatedData = {

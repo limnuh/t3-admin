@@ -9,7 +9,8 @@
     "lint": "next lint",
     "prepare": "husky install",
     "cron": "npx ts-node src/service/cron.mjs",
-    "start": "next start"
+    "start": "next start",
+    "plain-start": "npm run cron & npx prisma db push && npm run build && npm run start"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",

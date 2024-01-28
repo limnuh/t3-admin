@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  database:
+    image: postgres
+    ports:
+      - 5431:5432
+    volumes:
+      - db:/data/postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/postgres
+
+  app:
+    build: .
+    ports:
+      - 3000:3000
+    volumes:
+      - ./@types:/app/@types
+      - ./public:/app/public
+      - ./src:/app/src
+    depends_on:
+      - database
+
+volumes:
+  db:

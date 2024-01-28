@@ -2,10 +2,14 @@ import axios from 'axios';
 import cron from 'node-cron';
 
 const triggerDataCollect = async () => {
-  await axios.get('http://localhost:3000/api/scraper/collect');
+  try {
+    await axios.get('http://127.0.0.1:3000/api/scraper/collect');
+  } catch (error) {
+    //
+  }
 };
 
-cron.schedule('19 * * * *', () => {
+cron.schedule('21 * * * *', () => {
   console.log('Running a task every hour :19 minute');
   triggerDataCollect().catch(() => {
     // do nothing
