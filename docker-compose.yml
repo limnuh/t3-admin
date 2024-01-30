@@ -2,7 +2,7 @@ version: '3'
 
 services:
   database:
-    image: postgres
+    image: postgres:13.4-buster
     ports:
       - 5431:5432
     volumes:
@@ -19,6 +19,7 @@ services:
     volumes:
       - ./@types:/app/@types
       - ./public:/app/public
+      - ./prisma:/app/prisma
       - ./src:/app/src
     depends_on:
       - database

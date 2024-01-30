@@ -7,19 +7,17 @@ RUN apk update && \
         build-base \
         cmake
 
-COPY package.json package-lock.json .
+COPY package.json package-lock.json ./
 
 
-COPY .env .
-COPY custom-next-env.d.ts .
-COPY next-env.d.ts .
-COPY next.config.mjs .
-COPY postcss.config.cjs .
-COPY sst-env.d.ts .
-COPY sst.config.ts .
-COPY tailwind.config.ts .
-COPY tsconfig.json .
-COPY prisma .
+COPY .env ./
+COPY custom-next-env.d.ts ./
+COPY next.config.mjs ./
+COPY postcss.config.cjs ./
+COPY sst-env.d.ts ./
+COPY sst.config.ts ./
+COPY tailwind.config.ts ./
+COPY tsconfig.json ./
 
 
 RUN npm install -g npm@10.4.0
