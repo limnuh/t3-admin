@@ -39,6 +39,7 @@ export const searchRouter = createTRPCRouter({
       return await ctx.prisma.search.create({
         data: {
           name: input.name,
+          status: input.status,
           url: input.url,
         },
       });
