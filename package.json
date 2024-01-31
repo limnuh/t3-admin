@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "sst bind next dev",
+    "dev-next": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "prepare": "husky install",
