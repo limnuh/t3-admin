@@ -5,8 +5,8 @@ services:
     image: postgres:13.4-buster
     ports:
       - 5431:5432
-    volumes:
-      - db:/data/postgres
+    # volumes:
+    #   - db:/data/postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -21,6 +21,7 @@ services:
       - ./public:/app/public
       - ./prisma:/app/prisma
       - ./src:/app/src
+      - ./.env:/app/.env
     depends_on:
       - database
 

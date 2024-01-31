@@ -10,7 +10,6 @@ RUN apk update && \
 COPY package.json package-lock.json ./
 
 
-COPY .env ./
 COPY custom-next-env.d.ts ./
 COPY next.config.mjs ./
 COPY postcss.config.cjs ./
