@@ -32,6 +32,11 @@ const Search = () => {
       toast.error('Failed to remove search. Please try again later!');
     },
   });
+  const handleRemove = (id: string, name: string) => {
+    if (confirm(`Are you sure to delete "${name}" ?`)) {
+      remove({ id });
+    }
+  };
   const isLoading = isLoadingList || isLoadingRemove;
   if (isLoading) return <LoadingPage />;
 
@@ -56,7 +61,7 @@ const Search = () => {
             <SearchForm editedItem={editedItem} onClose={() => setFormOpen(false)} />
           </Modal>
 
-          <SearchList searchList={data} handleEdit={setEditedItem} handleRemove={(id) => remove({ id })} />
+          <SearchList searchList={data} handleEdit={setEditedItem} handleRemove={handleRemove} />
         </div>
       </div>
     </DefaultLayout>

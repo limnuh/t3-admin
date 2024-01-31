@@ -7,7 +7,7 @@ export type searchData = Partial<Search>;
 type SearchListProps = {
   searchList?: searchData[];
   handleEdit: (data: searchData) => void;
-  handleRemove: (id: string) => void;
+  handleRemove: (id: string, name: string) => void;
 };
 
 const SearchList: FC<SearchListProps> = ({ searchList, handleEdit, handleRemove }) => {
@@ -33,11 +33,19 @@ const SearchList: FC<SearchListProps> = ({ searchList, handleEdit, handleRemove 
                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                       <h5 className="font-medium text-black dark:text-white">{item.name}</h5>
                     </td>
-                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark bg-">
                       <p className="text-black dark:text-white">{item?.updatedAt?.toISOString().split('T')[0]}</p>
                     </td>
                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                      <p className="inline-flex rounded-full bg-success bg-opacity-10 py-1 px-3 text-sm font-medium text-success">
+                      <p
+                        className={`inline-flex rounded-full ${
+                          item.status === 'NEW'
+                            ? 'text-secondary bg-secondary'
+                            : item.status === 'END'
+                            ? 'text-danger bg-danger'
+                            : 'text-success bg-success'
+                        } bg-opacity-10 py-1 px-3 text-sm font-medium `}
+                      >
                         {item.status}
                       </p>
                     </td>
@@ -49,7 +57,10 @@ const SearchList: FC<SearchListProps> = ({ searchList, handleEdit, handleRemove 
                         <button onClick={() => handleEdit(item)} className="hover:text-primary">
                           Edit
                         </button>
-                        <button onClick={() => handleRemove(item.id ?? '')} className="hover:text-primary">
+                        <button
+                          onClick={() => handleRemove(item.id ?? '', item.name || 'Missing name')}
+                          className="hover:text-primary"
+                        >
                           Remove
                         </button>
                       </div>
