@@ -1,8 +1,11 @@
 import { type CustomTooltipProps } from 'ag-grid-react';
+import Image from 'next/image';
 import React, { type FC } from 'react';
 import type { History, CarUpload } from '~/pages/api/scraper';
 
-const CarRowTooltip: FC<CustomTooltipProps<CarUpload>> = ({ data }) => {
+const CarRowTooltip: FC<CustomTooltipProps<CarUpload>> = ({ data, colDef }) => {
+  if (colDef?.tooltipComponentParams === 'image')
+    return <Image src={data?.image || ''} width={150} height={150} alt="photo fo the car" />;
   type CarKeys = keyof History;
   const historyKeys = new Set<CarKeys>();
   if (!data?.history.length || !data) return null;
@@ -16,7 +19,7 @@ const CarRowTooltip: FC<CustomTooltipProps<CarUpload>> = ({ data }) => {
           <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">Date</th>
           {[...historyKeys].map((key) => (
             <th key={key} className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-              {String(data?.[key])}
+              {key}: {String(data?.[key])}
             </th>
           ))}
         </tr>

@@ -15,22 +15,19 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
 
   const defaultColDef = useMemo(() => {
     return {
-      editable: true,
       flex: 1,
-      minWidth: 100,
       filter: true,
       tooltipComponent: CarRowTooltip,
     };
   }, []);
 
   const [colDefs, setColDefs] = useState<ColDef<CarUpload>[]>([
-    {
-      valueGetter: (params) => params.data?.history[0]?.createdAt.toISOString().replace('T', ' ').split('.')[0],
-      headerName: 'Last changed',
-      // cellRenderer: CarHistoryCell,
-      field: 'history',
-      tooltipField: 'history',
-    },
+    { field: 'deleted', headerName: '🗑️', minWidth: 70 },
+    { field: 'price', minWidth: 100 },
+    { field: 'inactivePrice', headerName: 'Old', minWidth: 100 },
+    { field: 'distance', headerName: 'Dist', minWidth: 80 },
+    { field: 'km', minWidth: 90 },
+    { field: 'year', minWidth: 80 },
     {
       field: 'title',
       cellRenderer: (params: ICellRendererParams<CarUpload, JSX.Element>) => (
@@ -38,22 +35,38 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
           {params.value || ''}
         </a>
       ),
+      tooltipField: 'title',
+      tooltipComponentParams: 'image',
+      minWidth: 300,
     },
-    { field: 'description' },
-    { field: 'price' },
-    { field: 'inactivePrice', headerName: 'Old price' },
-    { field: 'distance' },
-    { field: 'km' },
-    { field: 'year' },
-    { field: 'deleted' },
-    { field: 'createdAt' },
-    { field: 'updatedAt' },
+    { field: 'description', minWidth: 150 },
+    {
+      valueGetter: (params) => params.data?.history[0]?.createdAt.toISOString().split('T')[0],
+      headerName: 'Last changed',
+      field: 'history',
+      tooltipField: 'history',
+      minWidth: 120,
+    },
+
+    {
+      field: 'createdAt',
+      headerName: 'Created',
+      type: 'date',
+      minWidth: 120,
+    },
+    { field: 'updatedAt', headerName: 'Updated', minWidth: 120 },
   ]);
 
   return (
     <div className=" bg-white p-4 shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto ag-theme-quartz" style={{ height: 500 }}>
-        <AgGridReact rowData={rowData} columnDefs={colDefs} defaultColDef={defaultColDef} />
+        <AgGridReact
+          rowData={rowData}
+          columnDefs={colDefs}
+          defaultColDef={defaultColDef}
+          suppressDragLeaveHidesColumns={true}
+          tooltipShowDelay={0}
+        />
       </div>
     </div>
   );
