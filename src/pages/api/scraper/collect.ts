@@ -49,7 +49,7 @@ const scrapeAllRunningSeach = (searches: Search[], delay = 1000): Promise<AllScr
   return promiseChain.then(() => results); // Return all results at the end
 };
 
-const getCarDataForHistoryDiff = (car: Partial<Car>): Partial<carHistoryData> => ({
+const getCarDataForHistoryDiff = (car: Partial<Omit<Car, 'history'>>): Partial<carHistoryData> => ({
   link: car.link,
   title: car.title,
   description: car.description,

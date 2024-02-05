@@ -1,7 +1,6 @@
-import axios, { type AxiosResponse } from 'axios';
 import { type GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
-import { useState, type FC } from 'react';
+import { type FC } from 'react';
 import { LoaderIcon } from 'react-hot-toast';
 import Breadcrumb from '~/components/Breadcrumb';
 import CarList from '~/components/Car/CarList';
@@ -9,27 +8,60 @@ import SearchDetails from '~/components/Search/SearchDetails';
 import DefaultLayout from '~/layout/DefaultLayout';
 import { ssg } from '~/server/helpers/ssgHelper';
 import { api } from '~/utils/api';
-import { type scrapeResponse } from '../api/scraper';
-
-const scraperUrl = '/api/scraper?url=';
+import type { CarUpload, History } from '../api/scraper';
+import type { JsonObject } from '@prisma/client/runtime/library';
 
 type SearchDetailsPageProps = {
   id: string;
-};
-
-const apiDefaultData = {
-  data: { cars: [], totalCount: 0 },
 };
 
 const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
   const { isLoading: isLoadingSearch, data, isError: isErrorSearch } = api.search.getById.useQuery({ id });
   const {
     isLoading: isLoadingCars,
-    data: cars,
+    data: carData,
     isError: isErrorCars,
   } = api.car.getBySearcIds.useQuery({ searchId: id });
   const isLoading = isLoadingCars || isLoadingSearch;
   const isError = isErrorCars || isErrorSearch;
+
+  const cars: CarUpload[] = (carData || [])
+    .map((car) => {
+      const historyObjectArray = car.history as JsonObject[];
+      const history: History[] = historyObjectArray.map(
+        ({
+          link,
+          title,
+          description,
+          image,
+          price,
+          inactivePrice,
+          extraData,
+          distance,
+          km,
+          year,
+          deleted,
+          createdAt,
+        }): History => ({
+          ...(link ? { link: String(link) } : {}),
+          ...(title ? { title: String(title) } : {}),
+          ...(description ? { description: String(description) } : {}),
+          ...(image ? { image: String(image) } : {}),
+          ...(extraData ? { extraData: String(extraData) } : {}),
+          ...(price || Number(price) === 0 ? { price: Number(price) } : {}),
+          ...(inactivePrice || Number(inactivePrice) === 0 ? { inactivePrice: Number(inactivePrice) } : {}),
+          ...(distance || Number(distance) === 0 ? { distance: Number(distance) } : {}),
+          ...(year || Number(year) === 0 ? { year: Number(year) } : {}),
+          ...(km || Number(km) === 0 ? { km: Number(km) } : {}),
+          ...{ deleted: Boolean(deleted) },
+          createdAt: new Date(String(createdAt)),
+        })
+      );
+      return { ...car, history } as CarUpload;
+    })
+    .sort((a, b) => {
+      return new Date(b?.createdAt || Date.now()).getTime() - new Date(a.createdAt || Date.now()).getTime();
+    });
 
   return (
     <DefaultLayout>

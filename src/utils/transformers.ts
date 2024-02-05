@@ -13,7 +13,7 @@ export type newCar = {
   distance: number;
   km: number;
   year: number;
-  history: unknown[];
+  history: History[];
 };
 
 export function convertStringToNumber(input: string): number {
@@ -66,6 +66,7 @@ export const transformCar = (carRaw: rawCarData): CarUpload => ({
   extraData: carRaw.extraData,
   year: extractYear(carRaw.extraData),
   km: extractKilometers(carRaw.extraData),
+  history: [],
   deleted: false,
   distance: convertStringToNumber(carRaw.distance),
 });

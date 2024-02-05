@@ -27,8 +27,39 @@ export type rawCarData = {
   distance: string;
 };
 
-export type CarUpload = Partial<Pick<Car, 'createdAt' | 'history' | 'updatedAt' | 'searchId'>> &
-  Omit<Car, 'createdAt' | 'history' | 'updatedAt' | 'searchId'>;
+export type History = {
+  link?: string;
+  title?: string;
+  description?: string;
+  image?: string;
+  price?: number;
+  inactivePrice?: number;
+  extraData?: string;
+  distance?: number;
+  km?: number;
+  year?: number;
+  deleted?: boolean;
+  createdAt: Date;
+};
+
+export type CarUpload = {
+  id: string;
+  searchId?: string;
+  link: string;
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+  inactivePrice: number;
+  extraData: string;
+  distance: number;
+  km: number;
+  year: number;
+  history: History[];
+  deleted: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
 
 type RawScrapedData = { cars: rawCarData[]; totalCount: string };
 
