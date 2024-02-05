@@ -53,7 +53,7 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
           ...(distance || Number(distance) === 0 ? { distance: Number(distance) } : {}),
           ...(year || Number(year) === 0 ? { year: Number(year) } : {}),
           ...(km || Number(km) === 0 ? { km: Number(km) } : {}),
-          ...{ deleted: Boolean(deleted) },
+          ...(typeof deleted === 'boolean' ? { deleted } : {}),
           createdAt: new Date(String(createdAt)),
         })
       );
