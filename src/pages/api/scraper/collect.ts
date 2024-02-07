@@ -6,6 +6,8 @@ import { type CarUpload, scrape, type scrapeResponse } from '.';
 import { type Car, type Search } from '@prisma/client';
 import { diff } from 'deep-object-diff';
 
+// TODO: pls refactor the whole file...
+
 type carHistoryData = {
   link: string;
   title: string;
@@ -78,15 +80,26 @@ const createNewHistory = (current: Partial<carHistoryData>, past: Car) => {
 const seaparateScrapedCars = (
   scrapedCars: CarUpload[],
   carsFromDb: Car[],
+  couldBeNewCars: Car[],
   searchId: string
 ): { newCars: newCar[]; needtToUpdateCars: Car[]; needToDeleteCars: Car[] } => {
   const idsFromDb = carsFromDb.map(({ id }) => id);
   const idsFromScrape = scrapedCars.map(({ id }) => id);
+  const couldBeNewCarIds = couldBeNewCars.map(({ id }) => id);
+
   return {
     newCars: scrapedCars
-      .filter(({ id: scrapedId }) => scrapedId && typeof scrapedId === 'string' && !idsFromDb.includes(scrapedId))
+      .filter(
+        ({ id: scrapedId }) =>
+          scrapedId &&
+          typeof scrapedId === 'string' &&
+          !idsFromDb.includes(scrapedId) &&
+          !couldBeNewCarIds.includes(scrapedId)
+      )
       .map((car) => prepareNewCar(car, searchId)),
-    needtToUpdateCars: carsFromDb.filter(({ id }) => id && id !== '' && idsFromScrape.includes(id)),
+    needtToUpdateCars: carsFromDb.filter(
+      ({ id }) => id && id !== '' && (idsFromScrape.includes(id) || couldBeNewCarIds.includes(id))
+    ),
     needToDeleteCars: carsFromDb.filter(({ id }) => !idsFromScrape.includes(id)),
   };
 };
@@ -104,8 +117,18 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
     const allScrapedData = await scrapeAllRunningSeach(searches);
 
     for await (const [searchId, scrapedCars] of allScrapedData.entries()) {
-      const carsFromDb = await caller.car.getBySearcIds({ searchId });
-      const { newCars, needtToUpdateCars, needToDeleteCars } = seaparateScrapedCars(scrapedCars, carsFromDb, searchId);
+      const carsFromDb = await caller.car.getBySearcId({ searchId });
+      const idsFromDb = carsFromDb.map(({ id }) => id);
+      const couldBeNewCarIds = scrapedCars
+        .filter(({ id: scrapedId }) => scrapedId && typeof scrapedId === 'string' && !idsFromDb.includes(scrapedId))
+        .map(({ id }) => id);
+      const couldBeNewCars = await caller.car.getByIds({ ids: couldBeNewCarIds });
+      const { newCars, needtToUpdateCars, needToDeleteCars } = seaparateScrapedCars(
+        scrapedCars,
+        carsFromDb,
+        couldBeNewCars,
+        searchId
+      );
       resultText += `
       ${searchId} Save started *** New: ${newCars.length} Update: ${needtToUpdateCars.length} Delete: ${needToDeleteCars.length} ***`;
       if (newCars?.length) {

@@ -22,7 +22,7 @@ export const carRouter = createTRPCRouter({
     return cars;
   }),
 
-  getBySearcIds: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
+  getBySearcId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
     const cars = await ctx.prisma.car.findMany({
       where: {
         searchId: input.searchId,
@@ -62,7 +62,18 @@ export const carRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input: { data } }) => {
-      return await ctx.prisma.car.createMany({ data });
+      const alreadyInDbCars = await ctx.prisma.car.findMany({
+        where: {
+          id: {
+            in: data.map(({ id }) => id),
+          },
+        },
+      });
+      if (alreadyInDbCars.length) {
+        console.log('warning, duplicate car ids detected', alreadyInDbCars);
+      }
+      const alreadyInDbIds = alreadyInDbCars.map(({ id }) => id);
+      return await ctx.prisma.car.createMany({ data: data.filter(({ id }) => !alreadyInDbIds.includes(id)) });
     }),
 
   update: publicProcedure
