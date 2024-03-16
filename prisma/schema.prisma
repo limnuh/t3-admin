@@ -86,7 +86,7 @@ model AgregatedSearchData {
 
 model Car {
     id            String   @unique
-    searchId      String   @map("Search") @db.Char(30)
+    searchId      String[]   @map("Search") @db.Char(30)
     search        Search   @relation("Cars_to_Search", fields: [searchId], references: [id])
     link          String
     title         String

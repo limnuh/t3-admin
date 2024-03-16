@@ -117,7 +117,7 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
     const allScrapedData = await scrapeAllRunningSeach(searches);
 
     for await (const [searchId, scrapedCars] of allScrapedData.entries()) {
-      const carsFromDb = await caller.car.getBySearcId({ searchId });
+      const carsFromDb = await caller.car.getBySearchId({ searchId });
       const idsFromDb = carsFromDb.map(({ id }) => id);
       const couldBeNewCarIds = scrapedCars
         .filter(({ id: scrapedId }) => scrapedId && typeof scrapedId === 'string' && !idsFromDb.includes(scrapedId))

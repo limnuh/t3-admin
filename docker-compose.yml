@@ -26,4 +26,4 @@ services:
       - database
 
 volumes:
-  db:
+  db: {}

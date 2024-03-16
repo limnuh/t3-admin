@@ -22,7 +22,7 @@ export const carRouter = createTRPCRouter({
     return cars;
   }),
 
-  getBySearcId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
+  getBySearchId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
     const cars = await ctx.prisma.car.findMany({
       where: {
         searchId: input.searchId,
