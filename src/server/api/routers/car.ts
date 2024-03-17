@@ -97,6 +97,7 @@ export const carRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string().min(1).max(255),
+        searchId: z.string().min(1).max(255).optional(),
         link: z.string().min(1).max(2000).optional(),
         title: z.string().min(1).max(2000).optional(),
         description: z.string().min(1).max(2000).optional(),
@@ -117,6 +118,7 @@ export const carRouter = createTRPCRouter({
         ctx,
         input: {
           id,
+          searchId,
           link,
           title,
           description,
@@ -136,6 +138,15 @@ export const carRouter = createTRPCRouter({
             id,
           },
           data: {
+            ...(searchId
+              ? {
+                  search: {
+                    connect: {
+                      id: searchId,
+                    },
+                  },
+                }
+              : {}),
             ...(link && { link }),
             ...(title && { title }),
             ...(description && { description }),
