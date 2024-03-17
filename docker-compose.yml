@@ -1,16 +1,17 @@
 version: '3'
 
 services:
-  database:
-    image: postgres:13.4-buster
+  postgres-db:
+    image: postgres
     ports:
-      - 5431:5432
-    # volumes:
-    #   - db:/data/postgres
+      - 5432:5432
+    volumes:
+      - db:/data/postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user_demo
+      POSTGRES_PASSWORD: pg_strong_password
       PGDATA: /data/postgres
+      POSTGRES_DB: demo_db
 
   app:
     build: .
@@ -23,7 +24,9 @@ services:
       - ./src:/app/src
       - ./.env:/app/.env
     depends_on:
-      - database
+      - postgres-db
+    environment:
+      DATABASE_URL: postgresql://user_demo:pg_strong_password@postgres-db:5432/demo_db
 
 volumes:
   db: {}

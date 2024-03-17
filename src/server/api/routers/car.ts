@@ -25,7 +25,11 @@ export const carRouter = createTRPCRouter({
   getBySearchId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
     const cars = await ctx.prisma.car.findMany({
       where: {
-        searchId: input.searchId,
+        search: {
+          some: {
+            id: input.searchId,
+          },
+        },
       },
     });
 
@@ -62,18 +66,31 @@ export const carRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input: { data } }) => {
-      const alreadyInDbCars = await ctx.prisma.car.findMany({
-        where: {
-          id: {
-            in: data.map(({ id }) => id),
+      const promises = data.map(async (item) => {
+        return await ctx.prisma.car.create({
+          data: {
+            id: item.id,
+            link: item.link,
+            description: item.description,
+            title: item.title,
+            image: item.image,
+            extraData: item.extraData,
+            price: item.price,
+            inactivePrice: item.inactivePrice,
+            distance: item.distance,
+            km: item.km,
+            year: item.year,
+            history: item.history,
+            search: {
+              connect: {
+                id: item.searchId,
+              },
+            },
           },
-        },
+        });
       });
-      if (alreadyInDbCars.length) {
-        console.log('warning, duplicate car ids detected', alreadyInDbCars);
-      }
-      const alreadyInDbIds = alreadyInDbCars.map(({ id }) => id);
-      return await ctx.prisma.car.createMany({ data: data.filter(({ id }) => !alreadyInDbIds.includes(id)) });
+      await Promise.all(promises);
+      return;
     }),
 
   update: publicProcedure
