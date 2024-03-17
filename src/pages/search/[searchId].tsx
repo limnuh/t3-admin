@@ -21,7 +21,7 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
     isLoading: isLoadingCars,
     data: carData,
     isError: isErrorCars,
-  } = api.car.getBySearcIds.useQuery({ searchId: id });
+  } = api.car.getBySearchId.useQuery({ searchId: id });
   const isLoading = isLoadingCars || isLoadingSearch;
   const isError = isErrorCars || isErrorSearch;
 

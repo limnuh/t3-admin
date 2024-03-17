@@ -80,10 +80,11 @@ const createNewHistory = (current: Partial<carHistoryData>, past: Car) => {
 const seaparateScrapedCars = (
   scrapedCars: CarUpload[],
   carsFromDb: Car[],
+  carsFromDbByIds: Car[],
   couldBeNewCars: Car[],
   searchId: string
 ): { newCars: newCar[]; needtToUpdateCars: Car[]; needToDeleteCars: Car[] } => {
-  const idsFromDb = carsFromDb.map(({ id }) => id);
+  const idsFromDbByIds = carsFromDbByIds.map(({ id }) => id);
   const idsFromScrape = scrapedCars.map(({ id }) => id);
   const couldBeNewCarIds = couldBeNewCars.map(({ id }) => id);
 
@@ -93,11 +94,11 @@ const seaparateScrapedCars = (
         ({ id: scrapedId }) =>
           scrapedId &&
           typeof scrapedId === 'string' &&
-          !idsFromDb.includes(scrapedId) &&
+          !idsFromDbByIds.includes(scrapedId) &&
           !couldBeNewCarIds.includes(scrapedId)
       )
       .map((car) => prepareNewCar(car, searchId)),
-    needtToUpdateCars: carsFromDb.filter(
+    needtToUpdateCars: carsFromDbByIds.filter(
       ({ id }) => id && id !== '' && (idsFromScrape.includes(id) || couldBeNewCarIds.includes(id))
     ),
     needToDeleteCars: carsFromDb.filter(({ id }) => !idsFromScrape.includes(id)),
@@ -117,7 +118,8 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
     const allScrapedData = await scrapeAllRunningSeach(searches);
 
     for await (const [searchId, scrapedCars] of allScrapedData.entries()) {
-      const carsFromDb = await caller.car.getBySearcId({ searchId });
+      const carsFromDb = await caller.car.getBySearchId({ searchId });
+      const carsFromDbByIds = await caller.car.getByIds({ ids: scrapedCars.map(({ id }) => id) });
       const idsFromDb = carsFromDb.map(({ id }) => id);
       const couldBeNewCarIds = scrapedCars
         .filter(({ id: scrapedId }) => scrapedId && typeof scrapedId === 'string' && !idsFromDb.includes(scrapedId))
@@ -126,6 +128,7 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
       const { newCars, needtToUpdateCars, needToDeleteCars } = seaparateScrapedCars(
         scrapedCars,
         carsFromDb,
+        carsFromDbByIds,
         couldBeNewCars,
         searchId
       );
@@ -158,6 +161,7 @@ const store = async (req: NextApiRequest, res: NextApiResponse<scrapeResponse>):
           await caller.car.update({
             id: car.id,
             ...scrapedCarDataToHistory,
+            searchId,
             deleted: false,
             history: createNewHistory(scrapedCarDataToHistory, car),
             updatedAt: new Date(),

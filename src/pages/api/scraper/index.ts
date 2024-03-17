@@ -61,9 +61,8 @@ export type CarUpload = {
   updatedAt?: Date;
 };
 
-type RawScrapedData = { cars: rawCarData[]; totalCount: string };
+type RawScrapedData = { cars: rawCarData[]; totalCount: string; carsPerPage: string };
 
-const carsPerPage = 100;
 const delayBetweenPages = 10000;
 
 const getHtml = (url: string): Promise<AxiosResponse<string>> => {
@@ -84,6 +83,8 @@ const getDataFromHtml = (html: string): RawScrapedData => {
   const $ = cheerio.load(html);
   return scrapeIt.scrapeHTML($, {
     totalCount: '.total-count',
+    carsPerPage:
+      '#hirdetesszemelyautosearch-results option:checked, #hirdetesszemelyautobovitettsearch-results option:checked',
     cars: {
       listItem: '.row.talalati-sor',
       data: {
@@ -128,6 +129,8 @@ export const scrape = async (url: string): Promise<scrapeResponse> => {
     const page = getDataFromHtml(resp.data);
     const carsNumberOnPage = page?.cars.length;
     const totalCount = convertStringToNumber(page.totalCount);
+    const carsPerPage = convertStringToNumber(page.carsPerPage);
+    console.log({ totalCount, carsNumberOnPage, carsPerPage });
 
     if (carsNumberOnPage) {
       resposne.data = {
@@ -152,11 +155,10 @@ function fetchWithDelay(urls: string[], delay = 1000): Promise<rawCarData[]> {
   let promiseChain: Promise<unknown> = Promise.resolve(); // Start with a resolved promise
   let results: rawCarData[] = [];
 
-  urls.forEach((url, index) => {
+  urls.forEach((pagedUrl) => {
     const randomisedDelay = delay + (Math.random() - 0.5) * delay * 0.1;
     promiseChain = promiseChain
       .then(async (): Promise<rawCarData[]> => {
-        const pagedUrl = `${url}/page${index + 2}`;
         const resp = await getHtml(pagedUrl);
         const page = getDataFromHtml(resp.data);
         return page.cars;

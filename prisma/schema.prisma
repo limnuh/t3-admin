@@ -68,7 +68,7 @@ model Search {
     createdAt           DateTime              @default(now())
     updatedAt           DateTime              @updatedAt
     AgregatedSearchData AgregatedSearchData[] @relation("AgregatedSearchData_to_Search")
-    Car                 Car[]                 @relation("Cars_to_Search")
+    Car                 Car[]                 @relation("Search_to_Car")
 
     @@index([id])
 }
@@ -85,9 +85,8 @@ model AgregatedSearchData {
 }
 
 model Car {
-    id            String   @unique
-    searchId      String   @map("Search") @db.Char(30)
-    search        Search   @relation("Cars_to_Search", fields: [searchId], references: [id])
+    id            String   @unique @id @default(cuid())
+    search        Search[]   @relation("Search_to_Car")
     link          String
     title         String
     description   String
