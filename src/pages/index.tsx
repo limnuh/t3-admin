@@ -2,7 +2,6 @@ import CardFour from '~/components/Examples/CardFour';
 import CardOne from '~/components/Examples/CardOne';
 import CardThree from '~/components/Examples/CardThree';
 import CardTwo from '~/components/Examples/CardTwo';
-import ChartOne from '~/components/Examples/ChartOne';
 import ChartThree from '~/components/Examples/ChartThree';
 import ChartTwo from '~/components/Examples/ChartTwo';
 import ChatCard from '~/components/Examples/ChatCard';
@@ -20,7 +19,6 @@ const ECommerce = () => {
       </div>
 
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne />
         <ChartTwo />
         <ChartThree />
         <div className="col-span-12 xl:col-span-8">

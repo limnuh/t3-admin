@@ -130,7 +130,6 @@ export const scrape = async (url: string): Promise<scrapeResponse> => {
     const carsNumberOnPage = page?.cars.length;
     const totalCount = convertStringToNumber(page.totalCount);
     const carsPerPage = convertStringToNumber(page.carsPerPage);
-    console.log({ totalCount, carsNumberOnPage, carsPerPage });
 
     if (carsNumberOnPage) {
       resposne.data = {

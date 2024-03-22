@@ -1,29 +1,9 @@
 import React, { useState } from 'react';
 import dynamic from 'next/dynamic';
+import { type ChartOneProps } from '~/server/api/routers/aggregatedSearchData';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-interface ChartOneState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
-}
-
-const ChartOne: React.FC = () => {
-  const [state, setState] = useState<ChartOneState>({
-    series: [
-      {
-        name: 'Product One',
-        data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30, 45],
-      },
-
-      {
-        name: 'Product Two',
-        data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39, 51],
-      },
-    ],
-  });
-
+const ChartOne: React.FC<ChartOneProps> = ({ series, categories }) => {
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
       <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
@@ -71,7 +51,7 @@ const ChartOne: React.FC = () => {
                 position: 'top',
                 horizontalAlign: 'left',
               },
-              colors: ['#3C50E0', '#80CAEE'],
+              colors: ['#3C50E0', '#80CAEE', '#FFA500', '#8A2BE2', '#FF6347'],
               chart: {
                 fontFamily: 'Satoshi, sans-serif',
                 height: 335,
@@ -95,6 +75,30 @@ const ChartOne: React.FC = () => {
                   options: {
                     chart: {
                       height: 300,
+                    },
+                  },
+                },
+                {
+                  breakpoint: 1366,
+                  options: {
+                    chart: {
+                      height: 350,
+                    },
+                  },
+                },
+                {
+                  breakpoint: 1366,
+                  options: {
+                    chart: {
+                      height: 350,
+                    },
+                  },
+                },
+                {
+                  breakpoint: 1366,
+                  options: {
+                    chart: {
+                      height: 350,
                     },
                   },
                 },
@@ -131,9 +135,9 @@ const ChartOne: React.FC = () => {
                 enabled: false,
               },
               markers: {
-                size: 4,
-                colors: '#fff',
-                strokeColors: ['#3056D3', '#80CAEE'],
+                // size: 4,
+                // colors: ['#fff'],
+                strokeColors: ['#3056D3', '#80CAEE', '#FF5733', '#66FF99', '#FFD700'],
                 strokeWidth: 3,
                 strokeOpacity: 0.9,
                 strokeDashArray: 0,
@@ -146,7 +150,7 @@ const ChartOne: React.FC = () => {
               },
               xaxis: {
                 type: 'category',
-                categories: ['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                categories,
                 axisBorder: {
                   show: false,
                 },
@@ -161,10 +165,16 @@ const ChartOne: React.FC = () => {
                   },
                 },
                 min: 0,
-                max: 100,
+                max: Math.max(
+                  Math.max(...(series[0]?.data || [0])),
+                  Math.max(...(series[1]?.data || [0])),
+                  Math.max(...(series[2]?.data || [0])),
+                  Math.max(...(series[3]?.data || [0])),
+                  Math.max(...(series[4]?.data || [0]))
+                ),
               },
             }}
-            series={state.series}
+            series={series}
             type="area"
             height={350}
           />

@@ -23,23 +23,22 @@ export const carRouter = createTRPCRouter({
   }),
 
   getBySearchId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
-    const cars = await ctx.prisma.car.findMany({
+    const search = await ctx.prisma.search.findUnique({
       where: {
-        search: {
-          some: {
-            id: input.searchId,
-          },
-        },
+        id: input.searchId,
+      },
+      include: {
+        Car: true,
       },
     });
 
-    if (!cars) {
+    if (!search) {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: 'Car not found',
       });
     }
-    return cars;
+    return search?.Car;
   }),
 
   createMany: publicProcedure

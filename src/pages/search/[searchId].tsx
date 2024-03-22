@@ -10,6 +10,7 @@ import { ssg } from '~/server/helpers/ssgHelper';
 import { api } from '~/utils/api';
 import type { CarUpload, History } from '../api/scraper';
 import type { JsonObject } from '@prisma/client/runtime/library';
+import ChartOne from '~/components/Examples/ChartOne';
 
 type SearchDetailsPageProps = {
   id: string;
@@ -22,6 +23,11 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
     data: carData,
     isError: isErrorCars,
   } = api.car.getBySearchId.useQuery({ searchId: id });
+  const {
+    isLoading: isLoadingAggregatedSearchData,
+    data: aggregatedSearchData,
+    isError: isErrorAggregatedSearchData,
+  } = api.aggregatedSearchData.getBySearchId.useQuery({ searchId: id });
   const isLoading = isLoadingCars || isLoadingSearch;
   const isError = isErrorCars || isErrorSearch;
 
@@ -84,6 +90,32 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
               )}
             </div>
             {isLoadingCars || !cars ? <LoaderIcon className="m-6" /> : <CarList searchList={cars} />}
+          </div>
+        )}
+        {isErrorAggregatedSearchData ? (
+          <div>Error</div>
+        ) : isLoadingAggregatedSearchData || !aggregatedSearchData ? (
+          <LoaderIcon />
+        ) : (
+          <div>
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mt-4">
+              <ChartOne
+                series={aggregatedSearchData.countChartData.series}
+                categories={aggregatedSearchData.countChartData.categories}
+              />
+            </div>
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mt-4">
+              <ChartOne
+                series={aggregatedSearchData.pricePercentilesChartData.series}
+                categories={aggregatedSearchData.pricePercentilesChartData.categories}
+              />
+            </div>
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mt-4">
+              <ChartOne
+                series={aggregatedSearchData.kmPercentilesChartData.series}
+                categories={aggregatedSearchData.kmPercentilesChartData.categories}
+              />
+            </div>
           </div>
         )}
       </div>
