@@ -3,6 +3,7 @@ Migrate:
 
 Install:
 `npm i`
+
 `npx prisma db push`
 
 Run in dev mode (with sst):
@@ -19,11 +20,13 @@ Run cron:
 
 Run in docker (new)
 `docker compose up -d`
+
 Stop:
 `docker compose down`
+
 Run in older docker:
 `docker-compose up -d`
+
 Stop:
 `docker-compose down`
 
-[T3 Stack](https://create.t3.gg/)
