@@ -1,47 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
-import { type ChartOneProps } from '~/server/api/routers/aggregatedSearchData';
+import { type SeriesItem } from '~/server/api/routers/aggregatedSearchData';
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-const ChartOne: React.FC<ChartOneProps> = ({ series, categories }) => {
+interface ChartOneProps {
+  series: SeriesItem[];
+  categories: string[];
+  title: string;
+}
+
+const primaryColors = ['#3C50E0', '#80CAEE', '#FFA500', '#8A2BE2', '#FF6347'];
+const secondaryColors = ['#3056D3', '#80CAEE', '#FF5733', '#66FF99', '#FFD700'];
+
+const getMin = (series: SeriesItem[]) => Math.min(...series.map(({ data }) => Math.min(...(data || [0]))));
+
+const getMax = (series: SeriesItem[]) => Math.max(...series.map(({ data }) => Math.max(...(data || [0]))));
+
+const ChartOne: React.FC<ChartOneProps> = ({ series, categories, title }) => {
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
-      <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
-        <div className="flex w-full flex-wrap gap-3 sm:gap-5">
-          <div className="flex min-w-47.5">
-            <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-primary">
-              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-primary"></span>
-            </span>
-            <div className="w-full">
-              <p className="font-semibold text-primary">Total Revenue</p>
-              <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
-            </div>
-          </div>
-          <div className="flex min-w-47.5">
-            <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondary">
-              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondary"></span>
-            </span>
-            <div className="w-full">
-              <p className="font-semibold text-secondary">Total Sales</p>
-              <p className="text-sm font-medium">12.04.2022 - 12.05.2022</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex w-full max-w-45 justify-end">
-          <div className="inline-flex items-center rounded-md bg-whiter p-1.5 dark:bg-meta-4">
-            <button className="rounded bg-white px-3 py-1 text-xs font-medium text-black shadow-card hover:bg-white hover:shadow-card dark:bg-boxdark dark:text-white dark:hover:bg-boxdark">
-              Day
-            </button>
-            <button className="rounded px-3 py-1 text-xs font-medium text-black hover:bg-white hover:shadow-card dark:text-white dark:hover:bg-boxdark">
-              Week
-            </button>
-            <button className="rounded px-3 py-1 text-xs font-medium text-black hover:bg-white hover:shadow-card dark:text-white dark:hover:bg-boxdark">
-              Month
-            </button>
-          </div>
-        </div>
-      </div>
-
       <div>
         <div id="chartOne" className="-ml-5">
           <ReactApexChart
@@ -51,23 +28,19 @@ const ChartOne: React.FC<ChartOneProps> = ({ series, categories }) => {
                 position: 'top',
                 horizontalAlign: 'left',
               },
-              colors: ['#3C50E0', '#80CAEE', '#FFA500', '#8A2BE2', '#FF6347'],
+              colors: primaryColors,
               chart: {
                 fontFamily: 'Satoshi, sans-serif',
                 height: 335,
-                type: 'area',
-                dropShadow: {
-                  enabled: true,
-                  color: '#623CEA14',
-                  top: 10,
-                  blur: 4,
-                  left: 0,
-                  opacity: 0.1,
-                },
+                type: 'line',
 
                 toolbar: {
-                  show: false,
+                  show: true,
                 },
+              },
+              title: {
+                text: title,
+                align: 'left',
               },
               responsive: [
                 {
@@ -75,30 +48,6 @@ const ChartOne: React.FC<ChartOneProps> = ({ series, categories }) => {
                   options: {
                     chart: {
                       height: 300,
-                    },
-                  },
-                },
-                {
-                  breakpoint: 1366,
-                  options: {
-                    chart: {
-                      height: 350,
-                    },
-                  },
-                },
-                {
-                  breakpoint: 1366,
-                  options: {
-                    chart: {
-                      height: 350,
-                    },
-                  },
-                },
-                {
-                  breakpoint: 1366,
-                  options: {
-                    chart: {
-                      height: 350,
                     },
                   },
                 },
@@ -137,7 +86,7 @@ const ChartOne: React.FC<ChartOneProps> = ({ series, categories }) => {
               markers: {
                 // size: 4,
                 // colors: ['#fff'],
-                strokeColors: ['#3056D3', '#80CAEE', '#FF5733', '#66FF99', '#FFD700'],
+                strokeColors: secondaryColors,
                 strokeWidth: 3,
                 strokeOpacity: 0.9,
                 strokeDashArray: 0,
@@ -164,18 +113,11 @@ const ChartOne: React.FC<ChartOneProps> = ({ series, categories }) => {
                     fontSize: '0px',
                   },
                 },
-                min: 0,
-                max: Math.max(
-                  Math.max(...(series[0]?.data || [0])),
-                  Math.max(...(series[1]?.data || [0])),
-                  Math.max(...(series[2]?.data || [0])),
-                  Math.max(...(series[3]?.data || [0])),
-                  Math.max(...(series[4]?.data || [0]))
-                ),
+                min: getMin(series),
+                max: getMax(series),
               },
             }}
             series={series}
-            type="area"
             height={350}
           />
         </div>

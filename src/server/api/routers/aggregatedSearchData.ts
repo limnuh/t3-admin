@@ -4,17 +4,14 @@ import { z } from 'zod';
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 
-type SeriesItem = {
+export type SeriesItem = {
   name: string;
   data: number[];
 };
 
 interface ChartOneData {
-  series: [SeriesItem, SeriesItem, SeriesItem, SeriesItem, SeriesItem];
-  categories: string[];
-}
-export interface ChartOneProps {
-  series: SeriesItem[];
+  // series: [SeriesItem, SeriesItem, SeriesItem, SeriesItem, SeriesItem];
+  series: [SeriesItem, SeriesItem, SeriesItem];
   categories: string[];
 }
 
@@ -31,7 +28,7 @@ export type AggregatedSearchDataType = {
 export const aggregatedSearchDataRouter = createTRPCRouter({
   getBySearchId: publicProcedure.input(z.object({ searchId: z.string() })).query(async ({ ctx, input }) => {
     const aggregatedSearchData = await ctx.prisma.agregatedSearchData.findMany({
-      where: { searchId: input.searchId },
+      where: { searchId: input.searchId, count: { gt: 0 } },
     });
 
     if (!aggregatedSearchData) {
@@ -53,12 +50,12 @@ export const aggregatedSearchDataRouter = createTRPCRouter({
       },
       pricePercentilesChartData: {
         series: [
+          // {
+          //   name: 'Max',
+          //   data: [],
+          // },
           {
-            name: 'Min',
-            data: [],
-          },
-          {
-            name: 'Average bottom 50%',
+            name: 'Average top 50%',
             data: [],
           },
           {
@@ -66,24 +63,24 @@ export const aggregatedSearchDataRouter = createTRPCRouter({
             data: [],
           },
           {
-            name: 'Average top 50%',
+            name: 'Average bottom 50%',
             data: [],
           },
-          {
-            name: 'Max',
-            data: [],
-          },
+          // {
+          //   name: 'Min',
+          //   data: [],
+          // },
         ],
         categories: [],
       },
       yearPercentilesChartData: {
         series: [
+          // {
+          //   name: 'Max',
+          //   data: [],
+          // },
           {
-            name: 'Min',
-            data: [],
-          },
-          {
-            name: 'Average bottom 50%',
+            name: 'Average top 50%',
             data: [],
           },
           {
@@ -91,24 +88,24 @@ export const aggregatedSearchDataRouter = createTRPCRouter({
             data: [],
           },
           {
-            name: 'Average top 50%',
+            name: 'Average bottom 50%',
             data: [],
           },
-          {
-            name: 'Max',
-            data: [],
-          },
+          // {
+          //   name: 'Min',
+          //   data: [],
+          // },
         ],
         categories: [],
       },
       kmPercentilesChartData: {
         series: [
+          // {
+          //   name: 'Max',
+          //   data: [],
+          // },
           {
-            name: 'Min',
-            data: [],
-          },
-          {
-            name: 'Average bottom 50%',
+            name: 'Average top 50%',
             data: [],
           },
           {
@@ -116,13 +113,13 @@ export const aggregatedSearchDataRouter = createTRPCRouter({
             data: [],
           },
           {
-            name: 'Average top 50%',
+            name: 'Average bottom 50%',
             data: [],
           },
-          {
-            name: 'Max',
-            data: [],
-          },
+          // {
+          //   name: 'Min',
+          //   data: [],
+          // },
         ],
         categories: [],
       },
@@ -135,21 +132,21 @@ export const aggregatedSearchDataRouter = createTRPCRouter({
       result.yearPercentilesChartData.categories.push(formatedDate);
       result.kmPercentilesChartData.categories.push(formatedDate);
       result.countChartData.series[0].data.push(count);
-      result.pricePercentilesChartData.series[0].data.push(pricePercentiles[0] || 0);
-      result.pricePercentilesChartData.series[1].data.push(pricePercentiles[1] || 0);
-      result.pricePercentilesChartData.series[2].data.push(pricePercentiles[2] || 0);
-      result.pricePercentilesChartData.series[3].data.push(pricePercentiles[3] || 0);
-      result.pricePercentilesChartData.series[4].data.push(pricePercentiles[4] || 0);
-      result.yearPercentilesChartData.series[0].data.push(yearPercentiles[0] || 0);
-      result.yearPercentilesChartData.series[1].data.push(yearPercentiles[1] || 0);
-      result.yearPercentilesChartData.series[2].data.push(yearPercentiles[2] || 0);
-      result.yearPercentilesChartData.series[3].data.push(yearPercentiles[3] || 0);
-      result.yearPercentilesChartData.series[4].data.push(yearPercentiles[4] || 0);
-      result.kmPercentilesChartData.series[0].data.push(kmPercentiles[0] || 0);
-      result.kmPercentilesChartData.series[1].data.push(kmPercentiles[1] || 0);
-      result.kmPercentilesChartData.series[2].data.push(kmPercentiles[2] || 0);
-      result.kmPercentilesChartData.series[3].data.push(kmPercentiles[3] || 0);
-      result.kmPercentilesChartData.series[4].data.push(kmPercentiles[4] || 0);
+      // result.pricePercentilesChartData.series[0].data.push(pricePercentiles[4] || 0);
+      result.pricePercentilesChartData.series[0].data.push(pricePercentiles[3] || 0);
+      result.pricePercentilesChartData.series[1].data.push(pricePercentiles[2] || 0);
+      result.pricePercentilesChartData.series[2].data.push(pricePercentiles[1] || 0);
+      // result.pricePercentilesChartData.series[4].data.push(pricePercentiles[0] || 0);
+      // result.yearPercentilesChartData.series[0].data.push(yearPercentiles[4] || 0);
+      result.yearPercentilesChartData.series[0].data.push(yearPercentiles[3] || 0);
+      result.yearPercentilesChartData.series[1].data.push(yearPercentiles[2] || 0);
+      result.yearPercentilesChartData.series[2].data.push(yearPercentiles[1] || 0);
+      // result.yearPercentilesChartData.series[4].data.push(yearPercentiles[0] || 0);
+      // result.kmPercentilesChartData.series[0].data.push(kmPercentiles[4] || 0);
+      result.kmPercentilesChartData.series[0].data.push(kmPercentiles[3] || 0);
+      result.kmPercentilesChartData.series[1].data.push(kmPercentiles[2] || 0);
+      result.kmPercentilesChartData.series[2].data.push(kmPercentiles[1] || 0);
+      // result.kmPercentilesChartData.series[4].data.push(kmPercentiles[0] || 0);
     });
     return result;
   }),

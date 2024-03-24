@@ -24,22 +24,6 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
   const [colDefs, setColDefs] = useState<ColDef<CarUpload>[]>([
     { field: 'deleted', headerName: '🗑️', minWidth: 70 },
     { field: 'price', minWidth: 100 },
-    { field: 'inactivePrice', headerName: 'Old', minWidth: 100 },
-    { field: 'distance', headerName: 'Dist', minWidth: 80 },
-    { field: 'km', minWidth: 90 },
-    { field: 'year', minWidth: 80 },
-    {
-      field: 'title',
-      cellRenderer: (params: ICellRendererParams<CarUpload, JSX.Element>) => (
-        <a target="_blank" href={params.data?.link || ''}>
-          {params.value || ''}
-        </a>
-      ),
-      tooltipField: 'title',
-      tooltipComponentParams: 'image',
-      minWidth: 300,
-    },
-    { field: 'description', minWidth: 150 },
     {
       valueGetter: (params) => params.data?.history[0]?.createdAt.toISOString().split('T')[0],
       headerName: 'Last changed',
@@ -54,7 +38,23 @@ const CarList: FC<CarListProps> = ({ searchList }) => {
       type: 'date',
       minWidth: 120,
     },
+    { field: 'km', minWidth: 90 },
+    { field: 'year', minWidth: 80 },
+    {
+      field: 'title',
+      cellRenderer: (params: ICellRendererParams<CarUpload, JSX.Element>) => (
+        <a target="_blank" href={params.data?.link || ''}>
+          {params.value || ''}
+        </a>
+      ),
+      tooltipField: 'title',
+      tooltipComponentParams: 'image',
+      minWidth: 300,
+    },
+    { field: 'description', minWidth: 150 },
+    { field: 'distance', headerName: 'Dist', minWidth: 80 },
     { field: 'updatedAt', headerName: 'Updated', minWidth: 120 },
+    { field: 'inactivePrice', headerName: 'Old', minWidth: 100 },
   ]);
 
   return (

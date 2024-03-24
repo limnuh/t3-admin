@@ -1,6 +1,5 @@
 import Breadcrumb from '../components/Breadcrumb';
 import ChartFour from '../components/Examples/ChartFour';
-import ChartOne from '../components/Examples/ChartOne';
 import ChartThree from '../components/Examples/ChartThree';
 import ChartTwo from '../components/Examples/ChartTwo';
 import DefaultLayout from '../layout/DefaultLayout';
@@ -14,7 +13,6 @@ const Chart = () => {
         <div className="col-span-12">
           <ChartFour />
         </div>
-        <ChartOne />
         <ChartTwo />
         <ChartThree />
       </div>

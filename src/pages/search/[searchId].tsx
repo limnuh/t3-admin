@@ -102,18 +102,21 @@ const SearchDetailsPage: FC<SearchDetailsPageProps> = ({ id }) => {
               <ChartOne
                 series={aggregatedSearchData.countChartData.series}
                 categories={aggregatedSearchData.countChartData.categories}
+                title="Count"
               />
             </div>
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mt-4">
               <ChartOne
                 series={aggregatedSearchData.pricePercentilesChartData.series}
                 categories={aggregatedSearchData.pricePercentilesChartData.categories}
+                title="Price"
               />
             </div>
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark mt-4">
               <ChartOne
                 series={aggregatedSearchData.kmPercentilesChartData.series}
                 categories={aggregatedSearchData.kmPercentilesChartData.categories}
+                title="Km"
               />
             </div>
           </div>
